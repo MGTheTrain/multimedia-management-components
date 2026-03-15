@@ -1,0 +1,74 @@
+name: Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Format check
+        run: just format-check
+
+      - name: Lint
+        run: just lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev libssl-dev pkg-config
+
+      - name: Start services
+        run: just compose-start
+
+      - name: Wait for services to be healthy
+        run: |
+          until pg_isready -h localhost -p 5432 -U user; do sleep 1; done
+          until curl -s http://localhost:4566/_localstack/health | grep -q '"s3": "available"'; do sleep 2; done
+
+      - name: Test models
+        run: just test models
+
+      - name: Test parsers
+        run: just test parsers
+
+      - name: Test connectors
+        run: just test connectors
+
+      - name: Test data-access
+        run: just test data-access
+
+      - name: Test services
+        run: just test services
+
+      # TODO: fix e2e-test
+      # - name: Test handlers
+      #   run: just test handlers

@@ -1,0 +1,25 @@
+[package]
+name = "connectors"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1"
+azure_core = "0.33.0"
+azure_storage = "0.21.0"
+azure_storage_blobs = "0.21.0"
+aws-config = "1.8.15"
+aws-sdk-s3 = "1.126.0"
+futures = "0.3"
+tokio = { version = "1.50.0", features = ["full"] }
+bytes = "1.11"
+dotenv = "0.15.0"
+log = "0.4.29"
+env_logger = "0.11.9"
+uuid = { version = "1.22.0", features = [ "v4"]}
+thiserror = "2"
+
+[dev-dependencies]
+tempfile = "3"

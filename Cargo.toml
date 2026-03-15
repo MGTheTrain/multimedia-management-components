@@ -1,0 +1,51 @@
+[workspace]
+members = [
+    ".",
+    "models",
+    "parsers",
+    "connectors",
+    "data-access",
+    "services",
+    "handlers",
+]
+resolver = "2"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+debug = 0
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
+
+[package]
+name = "multimedia-management-components"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "rest-api"
+path = "bin/rest-api.rs"
+
+[[bin]]
+name = "s3-cli"
+path = "bin/s3-cli.rs"
+
+[[bin]]
+name = "azure-cli"
+path = "bin/azure-cli.rs"
+
+[dependencies]
+services = { path = "services" }
+connectors = { path = "connectors" }
+data_access = { path = "data-access" }
+handlers = { path = "handlers" }
+axum = { version = "0.8", features = ["multipart"] }
+tokio = { version = "1", features = ["full"] }
+env_logger = "0.11"
+log = "0.4"
+dotenvy = "0.15"
+clap = { version = "4", features = ["derive"] }

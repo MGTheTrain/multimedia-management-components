@@ -1,0 +1,11 @@
+{
+	"name": "Rust",
+	"image": "mcr.microsoft.com/devcontainers/rust:2-bookworm",
+	 // Features to add to the dev container. More info: https://containers.dev/features
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+	"postCreateCommand": "cargo install diesel_cli cargo-tarpaulin just cargo-edit",
+    "forwardPorts": [8080, 5432, 4566, 10000],
+	"remoteUser": "root"
+}
