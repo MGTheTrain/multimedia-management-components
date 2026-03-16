@@ -242,7 +242,7 @@ mod tests {
         .await?;
 
         let blob_name = "nature.mp4";
-        let file_path = "../assets/nature.mp4";
+        let file_path = "../../assets/nature.mp4";
         let tags = vec![
             Some(String::from("nature")),
             Some(String::from("adventure")),
@@ -315,7 +315,7 @@ mod tests {
         .await?;
 
         let blob_name = "nature.mp4";
-        let data = std::fs::read("../assets/nature.mp4")
+        let data = std::fs::read("../../assets/nature.mp4")
             .map_err(|e| format!("failed to read asset: {}", e))?;
         let tags = vec![
             Some(String::from("nature")),

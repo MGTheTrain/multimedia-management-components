@@ -1,0 +1,22 @@
+[package]
+name = "rest-api"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "rest-api"
+path = "src/main.rs"
+
+[dependencies]
+services.workspace = true
+connectors.workspace = true
+data_access.workspace = true
+handlers.workspace = true
+axum.workspace = true
+tokio.workspace = true
+log.workspace = true
+env_logger.workspace = true
+dotenvy.workspace = true

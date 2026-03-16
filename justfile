@@ -1,14 +1,14 @@
 # Run tests for a given module, e.g. `just test models`
 test module:
-    cargo test --manifest-path {{module}}/Cargo.toml
+    cargo test --manifest-path crates/{{module}}/Cargo.toml
 
 # Run coverage for a given module, e.g. `just coverage data-access`
 coverage module:
-    cargo tarpaulin --manifest-path {{module}}/Cargo.toml --out Html
+    cargo tarpaulin --manifest-path crates/{{module}}/Cargo.toml --out Html
 
 # Update dependencies for a given module, e.g. `just upgrade data-access`
 upgrade module:
-    cargo upgrade --manifest-path {{module}}/Cargo.toml --incompatible
+    cargo upgrade --manifest-path crates/{{module}}/Cargo.toml --incompatible
 
 # Format Rust files
 format:

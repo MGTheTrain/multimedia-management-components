@@ -1,0 +1,13 @@
+[package]
+name = "models"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+chrono.workspace = true
+uuid.workspace = true
+serde.workspace = true
+validator.workspace = true

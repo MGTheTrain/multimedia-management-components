@@ -1,0 +1,21 @@
+[package]
+name = "handlers"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+services.workspace = true
+connectors.workspace = true
+data_access.workspace = true
+axum.workspace = true
+tokio.workspace = true
+log.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+env_logger.workspace = true
+axum-test = "19"
+tokio.workspace = true

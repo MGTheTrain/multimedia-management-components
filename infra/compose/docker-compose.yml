@@ -68,7 +68,7 @@ services:
       - api
     build:
       context: ../..
-      dockerfile: infra/docker/Dockerfile
+      dockerfile: infra/docker/rest-api/Dockerfile
     environment:
       - AWS_BUCKET_NAME=test-bucket
       - AWS_ENDPOINT_URL=http://localstack:4566

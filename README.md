@@ -131,11 +131,10 @@ If `[profile.release]` is set to `debug = 2` to retain full debug symbols, this 
 ```toml
 [profile.release]
 panic = "abort"
-debug = 0
 strip = true
-opt-level = "z"
-lto = true
+lto = "thin"
 codegen-units = 1
+opt-level = 3
 ```
 
 For reference: [Why do Rust binaries are so huge?](https://users.rust-lang.org/t/why-do-rust-binaries-are-so-huge/124450/5)

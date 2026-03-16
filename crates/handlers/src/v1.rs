@@ -119,7 +119,7 @@ pub async fn delete(
 //         let server = build_test_server().await;
 
 //         let mp4_bytes = std::fs::read(
-//             concat!(env!("CARGO_MANIFEST_DIR"), "/../assets/nature.mp4")
+//             concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/nature.mp4")
 //         ).unwrap();
 
 //         let response = server

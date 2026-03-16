@@ -1,0 +1,19 @@
+[package]
+name = "s3-cli"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "s3-cli"
+path = "src/main.rs"
+
+[dependencies]
+connectors.workspace = true
+clap.workspace = true
+tokio.workspace = true
+log.workspace = true
+env_logger.workspace = true
+dotenvy.workspace = true

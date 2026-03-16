@@ -9,12 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b5ace29ee3216de37c0546865ad08edef58b0f9e76838ed8959a84a990e58c5"
 
 [[package]]
-name = "adler2"
-version = "2.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
-
-[[package]]
 name = "aho-corasick"
 version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -127,18 +121,6 @@ dependencies = [
  "concurrent-queue",
  "event-listener 2.5.3",
  "futures-core",
-]
-
-[[package]]
-name = "async-compression"
-version = "0.4.41"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0f9ee0f6e02ffd7ad5816e9464499fba7b3effd01123b515c41d1697c43dad1"
-dependencies = [
- "compression-codecs",
- "compression-core",
- "pin-project-lite",
- "tokio",
 ]
 
 [[package]]
@@ -699,6 +681,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "azure-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "connectors",
+ "dotenvy",
+ "env_logger",
+ "log",
+ "tokio",
+]
+
+[[package]]
 name = "azure_core"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -717,7 +711,7 @@ dependencies = [
  "pin-project",
  "quick-xml",
  "rand 0.8.5",
- "reqwest 0.12.28",
+ "reqwest",
  "rustc_version",
  "serde",
  "serde_json",
@@ -729,38 +723,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "azure_core"
-version = "0.33.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd0160068f7a3021b5e749dc552374e82360463e9fb51e1127631a69fdde641f"
-dependencies = [
- "async-lock",
- "async-trait",
- "azure_core_macros",
- "bytes",
- "futures",
- "pin-project",
- "rustc_version",
- "serde",
- "serde_json",
- "tracing",
- "typespec",
- "typespec_client_core",
-]
-
-[[package]]
-name = "azure_core_macros"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bd69a8e70ec6be32ebf7e947cf9a58f6c7255e4cd9c48e640532ef3e37adc6d"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
- "tracing",
-]
-
-[[package]]
 name = "azure_storage"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -769,7 +731,7 @@ dependencies = [
  "RustyXML",
  "async-lock",
  "async-trait",
- "azure_core 0.21.0",
+ "azure_core",
  "bytes",
  "serde",
  "serde_derive",
@@ -786,7 +748,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97e83c3636ae86d9a6a7962b2112e3b19eb3903915c50ce06ff54ff0a2e6a7e4"
 dependencies = [
  "RustyXML",
- "azure_core 0.21.0",
+ "azure_core",
  "azure_storage",
  "azure_svc_blobstorage",
  "bytes",
@@ -806,7 +768,7 @@ version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e6c6f20c5611b885ba94c7bae5e02849a267381aecb8aee577e8c35ff4064c6"
 dependencies = [
- "azure_core 0.21.0",
+ "azure_core",
  "bytes",
  "futures",
  "log",
@@ -1010,23 +972,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
 
 [[package]]
-name = "compression-codecs"
-version = "0.4.37"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb7b51a7d9c967fc26773061ba86150f19c50c0d65c887cb1fbe295fd16619b7"
-dependencies = [
- "compression-core",
- "flate2",
- "memchr",
-]
-
-[[package]]
-name = "compression-core"
-version = "0.4.31"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75984efb6ed102a0d42db99afb6c1948f0380d1d91808d5529916e6c08b49d8d"
-
-[[package]]
 name = "concurrent-queue"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1042,13 +987,9 @@ dependencies = [
  "async-trait",
  "aws-config",
  "aws-sdk-s3",
- "azure_core 0.33.0",
  "azure_storage",
  "azure_storage_blobs",
- "bytes",
- "dotenv",
  "env_logger",
- "futures",
  "log",
  "tempfile",
  "thiserror 2.0.18",
@@ -1262,7 +1203,6 @@ dependencies = [
  "env_logger",
  "log",
  "models",
- "r2d2",
  "thiserror 2.0.18",
  "tokio",
  "uuid",
@@ -1381,12 +1321,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "dotenv"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "dotenvy"
@@ -1624,16 +1558,6 @@ name = "find-msvc-tools"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
-
-[[package]]
-name = "flate2"
-version = "1.1.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "843fba2746e448b37e26a819579957415c8cef339bf08564fe8b7ddbd959573c"
-dependencies = [
- "crc32fast",
- "miniz_oxide",
-]
 
 [[package]]
 name = "fnv"
@@ -1903,6 +1827,7 @@ dependencies = [
  "axum-test",
  "connectors",
  "data_access",
+ "env_logger",
  "log",
  "serde_json",
  "services",
@@ -2508,16 +2433,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 
 [[package]]
-name = "miniz_oxide"
-version = "0.8.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316"
-dependencies = [
- "adler2",
- "simd-adler32",
-]
-
-[[package]]
 name = "mio"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2533,7 +2448,6 @@ name = "models"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "dotenv",
  "serde",
  "uuid",
  "validator",
@@ -2568,22 +2482,6 @@ dependencies = [
  "mime",
  "spin 0.9.8",
  "version_check",
-]
-
-[[package]]
-name = "multimedia-management-components"
-version = "0.1.0"
-dependencies = [
- "axum",
- "clap",
- "connectors",
- "data_access",
- "dotenvy",
- "env_logger",
- "handlers",
- "log",
- "services",
- "tokio",
 ]
 
 [[package]]
@@ -2808,7 +2706,6 @@ name = "parsers"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "dotenv",
  "env_logger",
  "log",
  "models",
@@ -3262,43 +3159,7 @@ dependencies = [
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
- "wasm-streams 0.4.2",
- "web-sys",
-]
-
-[[package]]
-name = "reqwest"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab3f43e3283ab1488b624b44b0e988d0acea0b3214e694730a055cb6b2efa801"
-dependencies = [
- "base64 0.22.1",
- "bytes",
- "futures-core",
- "futures-util",
- "http 1.4.0",
- "http-body 1.0.1",
- "http-body-util",
- "hyper 1.8.1",
- "hyper-tls",
- "hyper-util",
- "js-sys",
- "log",
- "native-tls",
- "percent-encoding",
- "pin-project-lite",
- "rustls-pki-types",
- "sync_wrapper",
- "tokio",
- "tokio-native-tls",
- "tokio-util",
- "tower",
- "tower-http",
- "tower-service",
- "url",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-streams 0.5.0",
+ "wasm-streams",
  "web-sys",
 ]
 
@@ -3309,6 +3170,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94070964579245eb2f76e62a7668fe87bd9969ed6c41256f3bf614e3323dd3cc"
 dependencies = [
  "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rest-api"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "connectors",
+ "data_access",
+ "dotenvy",
+ "env_logger",
+ "handlers",
+ "log",
+ "services",
+ "tokio",
 ]
 
 [[package]]
@@ -3453,6 +3329,18 @@ name = "ryu"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+
+[[package]]
+name = "s3-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "connectors",
+ "dotenvy",
+ "env_logger",
+ "log",
+ "tokio",
+]
 
 [[package]]
 name = "schannel"
@@ -3631,11 +3519,9 @@ name = "services"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "bytes",
  "chrono",
  "connectors",
  "data_access",
- "dotenv",
  "env_logger",
  "log",
  "models",
@@ -3691,12 +3577,6 @@ dependencies = [
  "digest",
  "rand_core 0.6.4",
 ]
-
-[[package]]
-name = "simd-adler32"
-version = "0.3.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e320a6c5ad31d271ad523dcf3ad13e2767ad8b1cb8f047f75a8aeaf8da139da2"
 
 [[package]]
 name = "siphasher"
@@ -4078,18 +3958,13 @@ version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d4e6559d53cc268e5031cd8429d05415bc4cb4aefc4aa5d6cc35fbf5b924a1f8"
 dependencies = [
- "async-compression",
  "bitflags",
  "bytes",
- "futures-core",
  "futures-util",
  "http 1.4.0",
  "http-body 1.0.1",
- "http-body-util",
  "iri-string",
  "pin-project-lite",
- "tokio",
- "tokio-util",
  "tower",
  "tower-layer",
  "tower-service",
@@ -4156,55 +4031,6 @@ name = "typenum"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
-
-[[package]]
-name = "typespec"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b63559a2aab9c7694fa8d2658a828d6b36f1e3904b1860d820c7cc6a2ead61c7"
-dependencies = [
- "base64 0.22.1",
- "bytes",
- "futures",
- "serde",
- "serde_json",
- "url",
-]
-
-[[package]]
-name = "typespec_client_core"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de81ecf3a175da5a10ed60344caa8b53fe6d8ce28c6c978a7e3e09ca1e1b4131"
-dependencies = [
- "async-trait",
- "base64 0.22.1",
- "dyn-clone",
- "futures",
- "pin-project",
- "rand 0.10.0",
- "reqwest 0.13.2",
- "serde",
- "serde_json",
- "time",
- "tracing",
- "typespec",
- "typespec_macros",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "typespec_macros"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07108c5d18e00ec7bb09d2e48df95ebfab6b7179112d1e4216e9968ac2a0a429"
-dependencies = [
- "proc-macro2",
- "quote",
- "rustc_version",
- "syn",
-]
 
 [[package]]
 name = "typetag"
@@ -4509,19 +4335,6 @@ name = "wasm-streams"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "15053d8d85c7eccdbefef60f06769760a563c7f0a9d6902a13d35c7800b0ad65"
-dependencies = [
- "futures-util",
- "js-sys",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
-name = "wasm-streams"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d1ec4f6517c9e11ae630e200b2b65d193279042e28edd4a2cda233e46670bbb"
 dependencies = [
  "futures-util",
  "js-sys",

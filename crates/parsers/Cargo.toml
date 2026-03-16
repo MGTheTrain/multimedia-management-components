@@ -1,0 +1,18 @@
+[package]
+name = "parsers"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+models.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+log.workspace = true
+thiserror.workspace = true
+mp4 = "0.14"
+
+[dev-dependencies]
+env_logger.workspace = true

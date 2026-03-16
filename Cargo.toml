@@ -1,51 +1,63 @@
 [workspace]
 members = [
-    ".",
-    "models",
-    "parsers",
-    "connectors",
-    "data-access",
-    "services",
-    "handlers",
+    "crates/models",
+    "crates/parsers",
+    "crates/connectors",
+    "crates/data-access",
+    "crates/services",
+    "crates/handlers",
+    "crates/rest-api",
+    "crates/s3-cli",
+    "crates/azure-cli", 
 ]
 resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/MGTheTrain/multimedia-management-components"
+
+[workspace.lints.clippy]
+redundant_closure = "warn"
+
+[workspace.lints.rust]
+unused-must-use = "warn"
+
+[workspace.dependencies]
+# internal
+models = { path = "crates/models" }
+parsers = { path = "crates/parsers" }
+connectors = { path = "crates/connectors" }
+data_access = { path = "crates/data-access" }
+services = { path = "crates/services" }
+handlers = { path = "crates/handlers" }
+
+# external
+async-trait = "0.1"
+axum = { version = "0.8", features = ["multipart"] }
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+log = "0.4"
+env_logger = "0.11"
+dotenvy = "0.15"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+validator = { version = "0.20", features = ["derive"] }
+aws-config = "1"
+aws-sdk-s3 = "1"
+azure_storage = "0.21"
+azure_storage_blobs = "0.21"
 
 [profile.dev]
 panic = "abort"
 
 [profile.release]
 panic = "abort"
-debug = 0
 strip = true
-opt-level = "z"
-lto = true
+lto = "thin"
 codegen-units = 1
-
-[package]
-name = "multimedia-management-components"
-version = "0.1.0"
-edition = "2021"
-
-[[bin]]
-name = "rest-api"
-path = "bin/rest-api.rs"
-
-[[bin]]
-name = "s3-cli"
-path = "bin/s3-cli.rs"
-
-[[bin]]
-name = "azure-cli"
-path = "bin/azure-cli.rs"
-
-[dependencies]
-services = { path = "services" }
-connectors = { path = "connectors" }
-data_access = { path = "data-access" }
-handlers = { path = "handlers" }
-axum = { version = "0.8", features = ["multipart"] }
-tokio = { version = "1", features = ["full"] }
-env_logger = "0.11"
-log = "0.4"
-dotenvy = "0.15"
-clap = { version = "4", features = ["derive"] }
+opt-level = 3

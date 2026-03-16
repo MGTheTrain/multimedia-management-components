@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_parse_from_file() {
-        let result = Mp4Parser::parse_from_file("../assets/nature.mp4").unwrap();
+        let result = Mp4Parser::parse_from_file("../../assets/nature.mp4").unwrap();
 
         assert_eq!(result.container.file_size_in_kb, 5862561);
         assert!(result.container.video_track_id.is_some());
