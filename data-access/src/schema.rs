@@ -4,7 +4,6 @@ diesel::table! {
     audio_track (id) {
         id -> Uuid,
         container_meta_id -> Uuid,
-        name -> Varchar,
         media_type -> Varchar,
         bit_rate -> Int4,
         channel_config -> Varchar,
@@ -32,7 +31,6 @@ diesel::table! {
     subtitle_track (id) {
         id -> Uuid,
         container_meta_id -> Uuid,
-        name -> Varchar,
         media_type -> Varchar,
     }
 }
@@ -41,7 +39,6 @@ diesel::table! {
     video_track (id) {
         id -> Uuid,
         container_meta_id -> Uuid,
-        name -> Varchar,
         media_type -> Varchar,
         width -> Int4,
         height -> Int4,

@@ -32,7 +32,6 @@ use uuid::Uuid;
 pub struct VideoTrackRow {
     pub id: Uuid,
     pub container_meta_id: Uuid,
-    pub name: String,
     pub media_type: String,
     pub width: i32,
     pub height: i32,
@@ -45,7 +44,6 @@ impl From<&models::tracks::VideoTrack> for VideoTrackRow {
         VideoTrackRow {
             id: t.id,
             container_meta_id: t.container_meta_id,
-            name: t.name.clone(),
             media_type: t.media_type.clone(),
             width: t.width,
             height: t.height,
@@ -60,7 +58,6 @@ impl From<VideoTrackRow> for models::tracks::VideoTrack {
         models::tracks::VideoTrack {
             id: row.id,
             container_meta_id: row.container_meta_id,
-            name: row.name,
             media_type: row.media_type,
             width: row.width,
             height: row.height,
@@ -78,7 +75,6 @@ impl From<VideoTrackRow> for models::tracks::VideoTrack {
 pub struct AudioTrackRow {
     pub id: Uuid,
     pub container_meta_id: Uuid,
-    pub name: String,
     pub media_type: String,
     pub bit_rate: i32,
     pub channel_config: String,
@@ -90,7 +86,6 @@ impl From<&models::tracks::AudioTrack> for AudioTrackRow {
         AudioTrackRow {
             id: t.id,
             container_meta_id: t.container_meta_id,
-            name: t.name.clone(),
             media_type: t.media_type.clone(),
             bit_rate: t.bit_rate,
             channel_config: t.channel_config.clone(),
@@ -104,7 +99,6 @@ impl From<AudioTrackRow> for models::tracks::AudioTrack {
         models::tracks::AudioTrack {
             id: row.id,
             container_meta_id: row.container_meta_id,
-            name: row.name,
             media_type: row.media_type,
             bit_rate: row.bit_rate,
             channel_config: row.channel_config,
@@ -121,7 +115,6 @@ impl From<AudioTrackRow> for models::tracks::AudioTrack {
 pub struct SubtitleTrackRow {
     pub id: Uuid,
     pub container_meta_id: Uuid,
-    pub name: String,
     pub media_type: String,
 }
 
@@ -130,7 +123,6 @@ impl From<&models::tracks::SubtitleTrack> for SubtitleTrackRow {
         SubtitleTrackRow {
             id: t.id,
             container_meta_id: t.container_meta_id,
-            name: t.name.clone(),
             media_type: t.media_type.clone(),
         }
     }
@@ -141,7 +133,6 @@ impl From<SubtitleTrackRow> for models::tracks::SubtitleTrack {
         models::tracks::SubtitleTrack {
             id: row.id,
             container_meta_id: row.container_meta_id,
-            name: row.name,
             media_type: row.media_type,
         }
     }
@@ -213,7 +204,6 @@ mod tests {
         let domain = models::tracks::VideoTrack {
             id: Uuid::new_v4(),
             container_meta_id,
-            name: String::from("simple_video.h264"),
             media_type: String::from("h264"),
             width: 1280,
             height: 720,
@@ -223,8 +213,6 @@ mod tests {
 
         let row = VideoTrackRow::from(&domain);
         assert_eq!(row.id, domain.id);
-        assert_eq!(row.container_meta_id, domain.container_meta_id);
-        assert_eq!(row.name, domain.name);
         assert_eq!(row.media_type, domain.media_type);
         assert_eq!(row.width, domain.width);
         assert_eq!(row.height, domain.height);
@@ -241,7 +229,6 @@ mod tests {
         let domain = models::tracks::AudioTrack {
             id: Uuid::new_v4(),
             container_meta_id,
-            name: String::from("simple_audio.aac"),
             media_type: String::from("aac"),
             bit_rate: 157,
             channel_config: String::from("stereo"),
@@ -250,8 +237,6 @@ mod tests {
 
         let row = AudioTrackRow::from(&domain);
         assert_eq!(row.id, domain.id);
-        assert_eq!(row.container_meta_id, domain.container_meta_id);
-        assert_eq!(row.name, domain.name);
         assert_eq!(row.media_type, domain.media_type);
         assert_eq!(row.bit_rate, domain.bit_rate);
         assert_eq!(row.channel_config, domain.channel_config);
@@ -267,14 +252,11 @@ mod tests {
         let domain = models::tracks::SubtitleTrack {
             id: Uuid::new_v4(),
             container_meta_id,
-            name: String::from("simple_subtitle.vtt"),
             media_type: String::from("vtt"),
         };
 
         let row = SubtitleTrackRow::from(&domain);
         assert_eq!(row.id, domain.id);
-        assert_eq!(row.container_meta_id, domain.container_meta_id);
-        assert_eq!(row.name, domain.name);
         assert_eq!(row.media_type, domain.media_type);
 
         let roundtrip = models::tracks::SubtitleTrack::from(row);

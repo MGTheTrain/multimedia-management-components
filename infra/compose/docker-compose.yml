@@ -33,6 +33,19 @@ services:
       timeout: 5s
       retries: 10
 
+  localstack-init:
+    image: amazon/aws-cli:2.22.0
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: ["aws", "--endpoint-url=http://localstack:4566", "s3", "mb", "s3://test-bucket"]
+    depends_on:
+      localstack:
+        condition: service_healthy
+    networks:
+      - custom-network
+      
   azure-blob-storage:
     image: mcr.microsoft.com/azure-storage/azurite:3.35.0
     container_name: azure-blob-storage
@@ -69,8 +82,8 @@ services:
     depends_on:
       postgres:
         condition: service_started
-      localstack:
-        condition: service_healthy
+      localstack-init:
+        condition: service_completed_successfully
     networks:
       - custom-network
     restart: on-failure

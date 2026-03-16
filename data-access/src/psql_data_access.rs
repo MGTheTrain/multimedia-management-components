@@ -37,6 +37,7 @@ use models::{
 };
 use thiserror::Error;
 use uuid::Uuid;
+use validator::{Validate, ValidationErrors};
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
@@ -50,6 +51,8 @@ pub enum DataAccessError {
     Migration(#[from] Box<dyn std::error::Error + Send + Sync>),
     #[error("Connection error: {0}")]
     Connection(#[from] diesel::ConnectionError),
+    #[error("Validation error: {0}")]
+    Validation(#[from] ValidationErrors),
 }
 
 pub struct PsqlDataAccessConfig {
@@ -99,6 +102,7 @@ impl PsqlDataAccess {
         &self,
         track: &VideoTrack,
     ) -> Result<VideoTrack, DataAccessError> {
+        track.validate()?;
         use crate::schema::video_track::dsl;
         let row = VideoTrackRow::from(track);
         let mut conn = self.get_conn().await?;
@@ -115,6 +119,7 @@ impl PsqlDataAccess {
         &self,
         track: &AudioTrack,
     ) -> Result<AudioTrack, DataAccessError> {
+        track.validate()?;
         use crate::schema::audio_track::dsl;
         let row = AudioTrackRow::from(track);
         let mut conn = self.get_conn().await?;
@@ -131,6 +136,7 @@ impl PsqlDataAccess {
         &self,
         track: &SubtitleTrack,
     ) -> Result<SubtitleTrack, DataAccessError> {
+        track.validate()?;
         use crate::schema::subtitle_track::dsl;
         let row = SubtitleTrackRow::from(track);
         let mut conn = self.get_conn().await?;
@@ -147,6 +153,7 @@ impl PsqlDataAccess {
         &self,
         meta: &ContainerMeta,
     ) -> Result<ContainerMeta, DataAccessError> {
+        meta.validate()?;
         use crate::schema::container_meta::dsl;
         let row = ContainerMetaRow::from(meta);
         let mut conn = self.get_conn().await?;
@@ -224,11 +231,11 @@ impl PsqlDataAccess {
         track_id: &Uuid,
         track: &VideoTrack,
     ) -> Result<VideoTrack, DataAccessError> {
+        track.validate()?;
         use crate::schema::video_track::dsl;
         let mut conn = self.get_conn().await?;
         let result: VideoTrackRow = diesel::update(dsl::video_track.filter(dsl::id.eq(track_id)))
             .set((
-                dsl::name.eq(&track.name),
                 dsl::media_type.eq(&track.media_type),
                 dsl::width.eq(track.width),
                 dsl::height.eq(track.height),
@@ -247,11 +254,11 @@ impl PsqlDataAccess {
         track_id: &Uuid,
         track: &AudioTrack,
     ) -> Result<AudioTrack, DataAccessError> {
+        track.validate()?;
         use crate::schema::audio_track::dsl;
         let mut conn = self.get_conn().await?;
         let result: AudioTrackRow = diesel::update(dsl::audio_track.filter(dsl::id.eq(track_id)))
             .set((
-                dsl::name.eq(&track.name),
                 dsl::media_type.eq(&track.media_type),
                 dsl::bit_rate.eq(track.bit_rate),
                 dsl::channel_config.eq(&track.channel_config),
@@ -269,14 +276,12 @@ impl PsqlDataAccess {
         track_id: &Uuid,
         track: &SubtitleTrack,
     ) -> Result<SubtitleTrack, DataAccessError> {
+        track.validate()?;
         use crate::schema::subtitle_track::dsl;
         let mut conn = self.get_conn().await?;
         let result: SubtitleTrackRow =
             diesel::update(dsl::subtitle_track.filter(dsl::id.eq(track_id)))
-                .set((
-                    dsl::name.eq(&track.name),
-                    dsl::media_type.eq(&track.media_type),
-                ))
+                .set((dsl::media_type.eq(&track.media_type),))
                 .returning(SubtitleTrackRow::as_returning())
                 .get_result(&mut conn)
                 .await?;
@@ -289,6 +294,7 @@ impl PsqlDataAccess {
         meta_id: &Uuid,
         meta: &ContainerMeta,
     ) -> Result<ContainerMeta, DataAccessError> {
+        meta.validate()?;
         use crate::schema::container_meta::dsl;
         let mut conn = self.get_conn().await?;
         let result: ContainerMetaRow =
@@ -383,7 +389,6 @@ mod tests {
         let mut video_track = VideoTrack {
             id: Uuid::new_v4(),
             container_meta_id: Uuid::new_v4(),
-            name: String::from("simple_video.h264"),
             media_type: String::from("h264"),
             width: 1280,
             height: 720,
@@ -397,18 +402,19 @@ mod tests {
         let fetched = psql_data_access
             .get_video_track_by_id(&video_track.id)
             .await?;
-        assert_eq!(fetched.name, video_track.name);
         assert_eq!(fetched.container_meta_id, video_track.container_meta_id);
         assert_eq!(fetched.width, video_track.width);
         assert_eq!(fetched.height, video_track.height);
         assert_eq!(fetched.bit_rate, video_track.bit_rate);
         assert_eq!(fetched.frame_rate, video_track.frame_rate);
 
-        video_track.name = String::from("simple_updated_video.h264");
+        video_track.width = 1920;
+        video_track.height = 1080;
         let updated = psql_data_access
             .update_video_track_by_id(&video_track.id, &video_track)
             .await?;
-        assert_eq!(updated.name, "simple_updated_video.h264");
+        assert_eq!(updated.width, 1920);
+        assert_eq!(updated.height, 1080);
 
         let delete_result = psql_data_access
             .delete_video_track_by_id(&video_track.id)

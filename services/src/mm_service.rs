@@ -94,6 +94,7 @@ impl<C: BlobStorageConnector + Clone + Send + Sync> MultimediaManagementServiceT
         }
 
         let now = Utc::now();
+        container_meta.title = blob_name.to_string();
         container_meta.id = container_meta_id;
         container_meta.date_time_created = now;
         container_meta.date_time_updated = now;
@@ -144,6 +145,7 @@ impl<C: BlobStorageConnector + Clone + Send + Sync> MultimediaManagementServiceT
         }
 
         let now = Utc::now();
+        container_meta.title = blob_name.to_string();
         container_meta.id = container_meta_id;
         container_meta.date_time_created = now;
         container_meta.date_time_updated = now;

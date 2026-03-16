@@ -23,22 +23,25 @@
 use uuid::Uuid;
 
 use chrono::{DateTime, Utc};
+use validator::Validate;
 
-#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize, Validate)]
 pub struct ContainerMeta {
     pub id: Uuid,
     pub date_time_created: DateTime<Utc>,
     pub date_time_updated: DateTime<Utc>,
+    #[validate(length(min = 1, message = "title must not be empty"))]
     pub title: String,
     pub description: String,
     pub tags: Vec<Option<String>>,
     pub video_track_id: Option<Uuid>,
     pub audio_track_id: Option<Uuid>,
     pub subtitle_track_id: Option<Uuid>,
+    #[validate(range(min = 1, message = "file_size_in_kb must be positive"))]
     pub file_size_in_kb: i64,
+    #[validate(range(exclusive_min = 0.0, message = "duration must be greater than 0"))]
     pub duration: f64,
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -51,7 +54,6 @@ mod tests {
 
         let video_track = VideoTrack {
             id: Uuid::new_v4(),
-            name: String::from("simple_video.h264"),
             container_meta_id: container_meta_id,
             media_type: String::from("h264"),
             width: 1280,
@@ -62,7 +64,6 @@ mod tests {
 
         let audio_track = AudioTrack {
             id: Uuid::new_v4(),
-            name: String::from("simple_audio.aac"),
             container_meta_id: container_meta_id,
             media_type: String::from("aac"),
             bit_rate: 157,
@@ -72,7 +73,6 @@ mod tests {
 
         let subtitle_track = SubtitleTrack {
             id: Uuid::new_v4(),
-            name: String::from("simple_subtitle.unkown"),
             container_meta_id: container_meta_id,
             media_type: String::from("unkown"),
         };
@@ -107,5 +107,10 @@ mod tests {
         assert_eq!(container_meta.subtitle_track_id, Some(subtitle_track.id));
         assert_eq!(container_meta.file_size_in_kb, 100000);
         assert_eq!(container_meta.duration, 200.23);
+
+        assert!(video_track.validate().is_ok());
+        assert!(audio_track.validate().is_ok());
+        assert!(subtitle_track.validate().is_ok());
+        assert!(container_meta.validate().is_ok());
     }
 }

@@ -10,3 +10,4 @@ chrono = { version = "0.4", features = ["serde"] }
 dotenv = "0.15.0"
 uuid = { version = "1.22.0", features = ["v4", "serde"] }
 serde = { version = "1.0.228", features = ["derive"] }
+validator = { version = "0.20", features = ["derive"] }

@@ -51,7 +51,11 @@ impl AwsS3Connector {
         let aws_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
         AwsS3Connector {
             bucket_name: config.bucket_name,
-            client: Client::new(&aws_config),
+            client: Client::from_conf(
+                aws_sdk_s3::config::Builder::from(&aws_config)
+                    .force_path_style(true)
+                    .build(),
+            ),
         }
     }
 

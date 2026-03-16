@@ -21,35 +21,43 @@
 // SOFTWARE.
 
 use uuid::Uuid;
+use validator::Validate;
 
-#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize, Validate)]
 pub struct VideoTrack {
     pub id: Uuid,
     pub container_meta_id: Uuid,
-    pub name: String,
+    #[validate(length(min = 1, message = "media_type must not be empty"))]
     pub media_type: String,
+    #[validate(range(min = 1, message = "width must be positive"))]
     pub width: i32,
+    #[validate(range(min = 1, message = "height must be positive"))]
     pub height: i32,
+    #[validate(range(min = 1, message = "bit_rate must be positive"))]
     pub bit_rate: i32,
+    #[validate(range(min = 1, message = "frame_rate must be positive"))]
     pub frame_rate: i32,
 }
 
-#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize, Validate)]
 pub struct AudioTrack {
     pub id: Uuid,
     pub container_meta_id: Uuid,
-    pub name: String,
+    #[validate(length(min = 1, message = "media_type must not be empty"))]
     pub media_type: String,
+    #[validate(range(min = 0, message = "bit_rate must be non-negative"))]
     pub bit_rate: i32,
+    #[validate(length(min = 1, message = "channel_config must not be empty"))]
     pub channel_config: String,
+    #[validate(range(min = 1, message = "sample_frequency must be positive"))]
     pub sample_frequency: i32,
 }
 
-#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, PartialEq, Clone, serde::Serialize, serde::Deserialize, Validate)]
 pub struct SubtitleTrack {
     pub id: Uuid,
     pub container_meta_id: Uuid,
-    pub name: String,
+    #[validate(length(min = 1, message = "media_type must not be empty"))]
     pub media_type: String,
 }
 
@@ -63,7 +71,6 @@ mod tests {
 
         let video_track = VideoTrack {
             id: Uuid::new_v4(),
-            name: String::from("simple_video.h264"),
             container_meta_id,
             media_type: String::from("h264"),
             width: 1280,
@@ -72,7 +79,6 @@ mod tests {
             frame_rate: 30,
         };
 
-        assert_eq!(video_track.name, "simple_video.h264");
         assert_eq!(video_track.container_meta_id, container_meta_id);
         assert_eq!(video_track.media_type, "h264");
         assert_eq!(video_track.width, 1280);
@@ -82,7 +88,6 @@ mod tests {
 
         let audio_track = AudioTrack {
             id: Uuid::new_v4(),
-            name: String::from("simple_audio.aac"),
             container_meta_id,
             media_type: String::from("aac"),
             bit_rate: 157,
@@ -90,7 +95,6 @@ mod tests {
             sample_frequency: 48000,
         };
 
-        assert_eq!(audio_track.name, "simple_audio.aac");
         assert_eq!(audio_track.container_meta_id, container_meta_id);
         assert_eq!(audio_track.media_type, "aac");
         assert_eq!(audio_track.bit_rate, 157);
@@ -99,13 +103,15 @@ mod tests {
 
         let subtitle_track = SubtitleTrack {
             id: Uuid::new_v4(),
-            name: String::from("simple_subtitle.unknown"),
             container_meta_id,
             media_type: String::from("unknown"),
         };
 
-        assert_eq!(subtitle_track.name, "simple_subtitle.unknown");
         assert_eq!(subtitle_track.container_meta_id, container_meta_id);
         assert_eq!(subtitle_track.media_type, "unknown");
+
+        assert!(video_track.validate().is_ok());
+        assert!(audio_track.validate().is_ok());
+        assert!(subtitle_track.validate().is_ok());
     }
 }
