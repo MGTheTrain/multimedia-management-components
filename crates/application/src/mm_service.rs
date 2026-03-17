@@ -74,10 +74,11 @@ impl MultimediaManagementServiceTrait for MultimediaManagementService {
         let full_blob_name = format!("{}/{}", container_meta_id, blob_name);
 
         let tmp_path = format!("/tmp/{}", blob_name);
-        std::fs::write(&tmp_path, data)?;
+        tokio::fs::write(&tmp_path, data).await?;
         self.blob.upload_bytes(&full_blob_name, data).await?;
 
         let result = Mp4Parser::parse_from_file(&tmp_path)?;
+        let _ = tokio::fs::remove_file(&tmp_path).await;
         let mut container_meta = result.container;
 
         if let Some(mut t) = result.video {
