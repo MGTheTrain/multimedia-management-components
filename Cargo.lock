@@ -113,6 +113,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
+name = "application"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "blob-storage-connector",
+ "chrono",
+ "domain",
+ "env_logger",
+ "log",
+ "parsers",
+ "persistence",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
 name = "async-channel"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -684,8 +700,9 @@ dependencies = [
 name = "azure-cli"
 version = "0.1.0"
 dependencies = [
+ "blob-storage-connector",
  "clap",
- "connectors",
+ "domain",
  "dotenvy",
  "env_logger",
  "log",
@@ -829,6 +846,24 @@ name = "bitflags"
 version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
+
+[[package]]
+name = "blob-storage-connector"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "aws-config",
+ "aws-sdk-s3",
+ "azure_storage",
+ "azure_storage_blobs",
+ "domain",
+ "env_logger",
+ "log",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "uuid",
+]
 
 [[package]]
 name = "block-buffer"
@@ -978,23 +1013,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973"
 dependencies = [
  "crossbeam-utils",
-]
-
-[[package]]
-name = "connectors"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "aws-config",
- "aws-sdk-s3",
- "azure_storage",
- "azure_storage_blobs",
- "env_logger",
- "log",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "uuid",
 ]
 
 [[package]]
@@ -1192,24 +1210,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "data_access"
-version = "0.1.0"
-dependencies = [
- "bb8",
- "chrono",
- "diesel",
- "diesel-async",
- "diesel_migrations",
- "env_logger",
- "log",
- "models",
- "thiserror 2.0.18",
- "tokio",
- "uuid",
- "validator",
-]
-
-[[package]]
 name = "der"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1320,6 +1320,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "domain"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "serde",
+ "thiserror 2.0.18",
+ "uuid",
+ "validator",
 ]
 
 [[package]]
@@ -1823,14 +1835,14 @@ dependencies = [
 name = "handlers"
 version = "0.1.0"
 dependencies = [
+ "application",
  "axum",
  "axum-test",
- "connectors",
- "data_access",
+ "blob-storage-connector",
  "env_logger",
  "log",
+ "persistence",
  "serde_json",
- "services",
  "tokio",
 ]
 
@@ -2444,16 +2456,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "models"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "serde",
- "uuid",
- "validator",
-]
-
-[[package]]
 name = "mp4"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2706,9 +2708,9 @@ name = "parsers"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "domain",
  "env_logger",
  "log",
- "models",
  "mp4",
  "thiserror 2.0.18",
  "uuid",
@@ -2725,6 +2727,25 @@ name = "percent-encoding"
 version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+
+[[package]]
+name = "persistence"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bb8",
+ "chrono",
+ "diesel",
+ "diesel-async",
+ "diesel_migrations",
+ "domain",
+ "env_logger",
+ "log",
+ "thiserror 2.0.18",
+ "tokio",
+ "uuid",
+ "validator",
+]
 
 [[package]]
 name = "phf"
@@ -3176,14 +3197,14 @@ dependencies = [
 name = "rest-api"
 version = "0.1.0"
 dependencies = [
+ "application",
  "axum",
- "connectors",
- "data_access",
+ "blob-storage-connector",
  "dotenvy",
  "env_logger",
  "handlers",
  "log",
- "services",
+ "persistence",
  "tokio",
 ]
 
@@ -3334,8 +3355,9 @@ checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
 name = "s3-cli"
 version = "0.1.0"
 dependencies = [
+ "blob-storage-connector",
  "clap",
- "connectors",
+ "domain",
  "dotenvy",
  "env_logger",
  "log",
@@ -3512,22 +3534,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "services"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "chrono",
- "connectors",
- "data_access",
- "env_logger",
- "log",
- "models",
- "parsers",
- "tokio",
- "uuid",
 ]
 
 [[package]]

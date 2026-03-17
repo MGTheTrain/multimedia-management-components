@@ -1,5 +1,5 @@
 [package]
-name = "data_access"
+name = "persistence"
 version.workspace = true
 edition.workspace = true
 
@@ -7,7 +7,8 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
-models.workspace = true
+domain.workspace = true
+async-trait.workspace = true
 chrono.workspace = true
 uuid.workspace = true
 tokio.workspace = true

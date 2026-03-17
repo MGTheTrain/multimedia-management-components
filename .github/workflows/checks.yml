@@ -54,20 +54,20 @@ jobs:
           until pg_isready -h localhost -p 5432 -U user; do sleep 1; done
           until curl -s http://localhost:4566/_localstack/health | grep -q '"s3": "available"'; do sleep 2; done
 
-      - name: Test models
-        run: just test models
+      - name: Test domain
+        run: just test domain
 
       - name: Test parsers
         run: just test parsers
 
-      - name: Test connectors
-        run: just test connectors
+      - name: Test blob-storage-connector
+        run: just test infrastructure/blob-storage-connector
 
-      - name: Test data-access
-        run: just test data-access
+      - name: Test persistence
+        run: just test infrastructure/persistence
 
-      - name: Test services
-        run: just test services
+      - name: Test application
+        run: just test application
 
       # TODO: fix e2e-test
       # - name: Test handlers

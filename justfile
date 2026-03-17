@@ -1,12 +1,12 @@
-# Run tests for a given module, e.g. `just test models`
+# Run tests for a given module, e.g. `just test domain`
 test module:
     cargo test --manifest-path crates/{{module}}/Cargo.toml
 
-# Run coverage for a given module, e.g. `just coverage data-access`
+# Run coverage for a given module, e.g. `just coverage infrastructure/persistence`
 coverage module:
     cargo tarpaulin --manifest-path crates/{{module}}/Cargo.toml --out Html
 
-# Update dependencies for a given module, e.g. `just upgrade data-access`
+# Update dependencies for a given module, e.g. `just upgrade infrastructure/persistence`
 upgrade module:
     cargo upgrade --manifest-path crates/{{module}}/Cargo.toml --incompatible
 

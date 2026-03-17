@@ -20,9 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+use blob_storage_connector::azure_blob_connector::{
+    AzureBlobConnector, AzureBlobStorageAccountConfig,
+};
 use clap::{Parser, Subcommand};
-use connectors::azure_blob_connector::{AzureBlobConnector, AzureBlobStorageAccountConfig};
-use connectors::blob_storage_connector::BlobStorageConnector;
+use domain::blob_storage_connector::BlobStorageConnector;
 use log::info;
 
 #[derive(Parser, Debug)]
@@ -86,7 +88,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             file_path,
         } => {
             connector
-                .upload_blob_bytes(&blob_name, &std::fs::read(&file_path)?)
+                .upload_bytes(&blob_name, &std::fs::read(&file_path)?)
                 .await?;
             info!("Uploaded {} as {}", file_path, blob_name);
         }
@@ -94,12 +96,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             blob_name,
             output_path,
         } => {
-            let bytes = connector.download_blob(&blob_name).await?;
+            let bytes = connector.download(&blob_name).await?;
             std::fs::write(&output_path, bytes)?;
             info!("Downloaded {} to {}", blob_name, output_path);
         }
         AzureOperation::DeleteBlob { blob_name } => {
-            connector.delete_blob(&blob_name).await?;
+            connector.delete(&blob_name).await?;
             info!("Deleted {}", blob_name);
         }
     }

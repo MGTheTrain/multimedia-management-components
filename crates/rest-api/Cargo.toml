@@ -11,9 +11,9 @@ name = "rest-api"
 path = "src/main.rs"
 
 [dependencies]
-services.workspace = true
-connectors.workspace = true
-data_access.workspace = true
+application.workspace = true
+blob-storage-connector.workspace = true
+persistence.workspace = true
 handlers.workspace = true
 axum.workspace = true
 tokio.workspace = true

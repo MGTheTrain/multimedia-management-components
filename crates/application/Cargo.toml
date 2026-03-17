@@ -1,5 +1,5 @@
 [package]
-name = "services"
+name = "application"
 version.workspace = true
 edition.workspace = true
 
@@ -7,17 +7,15 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
-connectors.workspace = true
+domain.workspace = true
 parsers.workspace = true
-data_access.workspace = true
-models.workspace = true
-uuid.workspace = true
+async-trait.workspace = true
 chrono.workspace = true
+uuid.workspace = true
 log.workspace = true
 tokio.workspace = true
-async-trait.workspace = true
 
 [dev-dependencies]
 env_logger.workspace = true
-connectors.workspace = true
-data_access.workspace = true
+blob-storage-connector.workspace = true
+persistence.workspace = true

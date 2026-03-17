@@ -1,10 +1,10 @@
 [workspace]
 members = [
-    "crates/models",
+    "crates/domain",
     "crates/parsers",
-    "crates/connectors",
-    "crates/data-access",
-    "crates/services",
+    "crates/infrastructure/blob-storage-connector",
+    "crates/infrastructure/persistence",
+    "crates/application",
     "crates/handlers",
     "crates/rest-api",
     "crates/s3-cli",
@@ -26,11 +26,11 @@ unused-must-use = "warn"
 
 [workspace.dependencies]
 # internal
-models = { path = "crates/models" }
+domain = { path = "crates/domain" }
 parsers = { path = "crates/parsers" }
-connectors = { path = "crates/connectors" }
-data_access = { path = "crates/data-access" }
-services = { path = "crates/services" }
+blob-storage-connector = { path = "crates/infrastructure/blob-storage-connector" }
+persistence = { path = "crates/infrastructure/persistence" }
+application = { path = "crates/application" }
 handlers = { path = "crates/handlers" }
 
 # external

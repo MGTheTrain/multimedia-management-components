@@ -39,8 +39,8 @@ pub struct VideoTrackRow {
     pub frame_rate: i32,
 }
 
-impl From<&models::tracks::VideoTrack> for VideoTrackRow {
-    fn from(t: &models::tracks::VideoTrack) -> Self {
+impl From<&domain::tracks::VideoTrack> for VideoTrackRow {
+    fn from(t: &domain::tracks::VideoTrack) -> Self {
         VideoTrackRow {
             id: t.id,
             container_meta_id: t.container_meta_id,
@@ -53,9 +53,9 @@ impl From<&models::tracks::VideoTrack> for VideoTrackRow {
     }
 }
 
-impl From<VideoTrackRow> for models::tracks::VideoTrack {
+impl From<VideoTrackRow> for domain::tracks::VideoTrack {
     fn from(row: VideoTrackRow) -> Self {
-        models::tracks::VideoTrack {
+        domain::tracks::VideoTrack {
             id: row.id,
             container_meta_id: row.container_meta_id,
             media_type: row.media_type,
@@ -81,8 +81,8 @@ pub struct AudioTrackRow {
     pub sample_frequency: i32,
 }
 
-impl From<&models::tracks::AudioTrack> for AudioTrackRow {
-    fn from(t: &models::tracks::AudioTrack) -> Self {
+impl From<&domain::tracks::AudioTrack> for AudioTrackRow {
+    fn from(t: &domain::tracks::AudioTrack) -> Self {
         AudioTrackRow {
             id: t.id,
             container_meta_id: t.container_meta_id,
@@ -94,9 +94,9 @@ impl From<&models::tracks::AudioTrack> for AudioTrackRow {
     }
 }
 
-impl From<AudioTrackRow> for models::tracks::AudioTrack {
+impl From<AudioTrackRow> for domain::tracks::AudioTrack {
     fn from(row: AudioTrackRow) -> Self {
-        models::tracks::AudioTrack {
+        domain::tracks::AudioTrack {
             id: row.id,
             container_meta_id: row.container_meta_id,
             media_type: row.media_type,
@@ -118,8 +118,8 @@ pub struct SubtitleTrackRow {
     pub media_type: String,
 }
 
-impl From<&models::tracks::SubtitleTrack> for SubtitleTrackRow {
-    fn from(t: &models::tracks::SubtitleTrack) -> Self {
+impl From<&domain::tracks::SubtitleTrack> for SubtitleTrackRow {
+    fn from(t: &domain::tracks::SubtitleTrack) -> Self {
         SubtitleTrackRow {
             id: t.id,
             container_meta_id: t.container_meta_id,
@@ -128,9 +128,9 @@ impl From<&models::tracks::SubtitleTrack> for SubtitleTrackRow {
     }
 }
 
-impl From<SubtitleTrackRow> for models::tracks::SubtitleTrack {
+impl From<SubtitleTrackRow> for domain::tracks::SubtitleTrack {
     fn from(row: SubtitleTrackRow) -> Self {
-        models::tracks::SubtitleTrack {
+        domain::tracks::SubtitleTrack {
             id: row.id,
             container_meta_id: row.container_meta_id,
             media_type: row.media_type,
@@ -157,8 +157,8 @@ pub struct ContainerMetaRow {
     pub duration: f64,
 }
 
-impl From<&models::container_meta::ContainerMeta> for ContainerMetaRow {
-    fn from(m: &models::container_meta::ContainerMeta) -> Self {
+impl From<&domain::container_meta::ContainerMeta> for ContainerMetaRow {
+    fn from(m: &domain::container_meta::ContainerMeta) -> Self {
         ContainerMetaRow {
             id: m.id,
             date_time_created: m.date_time_created,
@@ -175,9 +175,9 @@ impl From<&models::container_meta::ContainerMeta> for ContainerMetaRow {
     }
 }
 
-impl From<ContainerMetaRow> for models::container_meta::ContainerMeta {
+impl From<ContainerMetaRow> for domain::container_meta::ContainerMeta {
     fn from(row: ContainerMetaRow) -> Self {
-        models::container_meta::ContainerMeta {
+        domain::container_meta::ContainerMeta {
             id: row.id,
             date_time_created: row.date_time_created,
             date_time_updated: row.date_time_updated,
@@ -201,7 +201,7 @@ mod tests {
     #[test]
     fn test_video_track_row_roundtrip() {
         let container_meta_id = Uuid::new_v4();
-        let domain = models::tracks::VideoTrack {
+        let domain = domain::tracks::VideoTrack {
             id: Uuid::new_v4(),
             container_meta_id,
             media_type: String::from("h264"),
@@ -219,14 +219,14 @@ mod tests {
         assert_eq!(row.bit_rate, domain.bit_rate);
         assert_eq!(row.frame_rate, domain.frame_rate);
 
-        let roundtrip = models::tracks::VideoTrack::from(row);
+        let roundtrip = domain::tracks::VideoTrack::from(row);
         assert_eq!(roundtrip, domain);
     }
 
     #[test]
     fn test_audio_track_row_roundtrip() {
         let container_meta_id = Uuid::new_v4();
-        let domain = models::tracks::AudioTrack {
+        let domain = domain::tracks::AudioTrack {
             id: Uuid::new_v4(),
             container_meta_id,
             media_type: String::from("aac"),
@@ -242,14 +242,14 @@ mod tests {
         assert_eq!(row.channel_config, domain.channel_config);
         assert_eq!(row.sample_frequency, domain.sample_frequency);
 
-        let roundtrip = models::tracks::AudioTrack::from(row);
+        let roundtrip = domain::tracks::AudioTrack::from(row);
         assert_eq!(roundtrip, domain);
     }
 
     #[test]
     fn test_subtitle_track_row_roundtrip() {
         let container_meta_id = Uuid::new_v4();
-        let domain = models::tracks::SubtitleTrack {
+        let domain = domain::tracks::SubtitleTrack {
             id: Uuid::new_v4(),
             container_meta_id,
             media_type: String::from("vtt"),
@@ -259,14 +259,14 @@ mod tests {
         assert_eq!(row.id, domain.id);
         assert_eq!(row.media_type, domain.media_type);
 
-        let roundtrip = models::tracks::SubtitleTrack::from(row);
+        let roundtrip = domain::tracks::SubtitleTrack::from(row);
         assert_eq!(roundtrip, domain);
     }
 
     #[test]
     fn test_container_meta_row_roundtrip() {
         let now = Utc::now();
-        let domain = models::container_meta::ContainerMeta {
+        let domain = domain::container_meta::ContainerMeta {
             id: Uuid::new_v4(),
             date_time_created: now,
             date_time_updated: now,
@@ -296,7 +296,7 @@ mod tests {
         assert_eq!(row.file_size_in_kb, domain.file_size_in_kb);
         assert_eq!(row.duration, domain.duration);
 
-        let roundtrip = models::container_meta::ContainerMeta::from(row);
+        let roundtrip = domain::container_meta::ContainerMeta::from(row);
         assert_eq!(roundtrip, domain);
     }
 }

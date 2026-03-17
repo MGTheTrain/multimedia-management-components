@@ -7,7 +7,7 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
-models.workspace = true
+domain.workspace = true
 uuid.workspace = true
 chrono.workspace = true
 log.workspace = true

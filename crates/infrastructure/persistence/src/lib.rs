@@ -21,5 +21,5 @@
 // SOFTWARE.
 
 pub mod db_models;
-pub mod psql_data_access;
+pub mod psql_repository;
 pub mod schema;

@@ -32,11 +32,8 @@ pub enum BlobStorageError {
 }
 
 #[async_trait]
-#[async_trait]
-pub trait BlobStorageConnector {
-    async fn upload_blob(&self, blob_name: &str, file_path: &str) -> Result<(), BlobStorageError>;
-    async fn upload_blob_bytes(&self, blob_name: &str, data: &[u8])
-        -> Result<(), BlobStorageError>;
-    async fn download_blob(&self, blob_name: &str) -> Result<Vec<u8>, BlobStorageError>;
-    async fn delete_blob(&self, blob_name: &str) -> Result<(), BlobStorageError>;
+pub trait BlobStorageConnector: Send + Sync {
+    async fn upload_bytes(&self, blob_name: &str, data: &[u8]) -> Result<(), BlobStorageError>;
+    async fn download(&self, blob_name: &str) -> Result<Vec<u8>, BlobStorageError>;
+    async fn delete(&self, blob_name: &str) -> Result<(), BlobStorageError>;
 }

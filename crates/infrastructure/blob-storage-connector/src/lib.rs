@@ -22,4 +22,3 @@
 
 pub mod aws_s3_connector;
 pub mod azure_blob_connector;
-pub mod blob_storage_connector;

@@ -20,15 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use crate::blob_storage_connector::{BlobStorageConnector, BlobStorageError};
 use async_trait::async_trait;
 use azure_storage::prelude::*;
 use azure_storage_blobs::prelude::*;
+use domain::blob_storage_connector::{BlobStorageConnector, BlobStorageError};
 use log::info;
-use std::{
-    fs::File,
-    io::{BufReader, Read},
-};
 
 pub struct AzureBlobStorageAccountConfig {
     pub account_name: String,
@@ -77,25 +73,7 @@ impl AzureBlobConnector {
 // trait impl — separate block
 #[async_trait]
 impl BlobStorageConnector for AzureBlobConnector {
-    async fn upload_blob(&self, blob_name: &str, file_path: &str) -> Result<(), BlobStorageError> {
-        let f = File::open(file_path)?;
-        let mut reader = BufReader::new(f);
-        let mut buffer = Vec::new();
-        reader.read_to_end(&mut buffer)?;
-        self.container_client
-            .blob_client(blob_name)
-            .put_block_blob(buffer)
-            .await
-            .map_err(|e| BlobStorageError::Storage(e.to_string()))?;
-        info!("Uploaded blob {}", blob_name);
-        Ok(())
-    }
-
-    async fn upload_blob_bytes(
-        &self,
-        blob_name: &str,
-        data: &[u8],
-    ) -> Result<(), BlobStorageError> {
+    async fn upload_bytes(&self, blob_name: &str, data: &[u8]) -> Result<(), BlobStorageError> {
         self.container_client
             .blob_client(blob_name)
             .put_block_blob(data.to_vec())
@@ -105,7 +83,7 @@ impl BlobStorageConnector for AzureBlobConnector {
         Ok(())
     }
 
-    async fn download_blob(&self, blob_name: &str) -> Result<Vec<u8>, BlobStorageError> {
+    async fn download(&self, blob_name: &str) -> Result<Vec<u8>, BlobStorageError> {
         let data = self
             .container_client
             .blob_client(blob_name)
@@ -116,7 +94,7 @@ impl BlobStorageConnector for AzureBlobConnector {
         Ok(data)
     }
 
-    async fn delete_blob(&self, blob_name: &str) -> Result<(), BlobStorageError> {
+    async fn delete(&self, blob_name: &str) -> Result<(), BlobStorageError> {
         self.container_client
             .blob_client(blob_name)
             .delete()
@@ -143,32 +121,19 @@ async fn test_azure_blob_connector() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut tmp = NamedTempFile::new()?;
     writeln!(tmp, "sample content")?;
-    let blob_name = format!("{}/sample.txt", uuid::Uuid::new_v4());
-
-    // upload from file path
-    let upload = connector
-        .upload_blob(&blob_name, tmp.path().to_str().unwrap())
-        .await;
-    assert!(upload.is_ok());
-
-    let bytes = connector.download_blob(&blob_name).await?;
-    assert!(!bytes.is_empty());
-    assert_eq!(bytes, b"sample content\n");
-
-    connector.delete_blob(&blob_name).await?;
 
     // upload from bytes
     let blob_name_bytes = format!("{}/sample_bytes.txt", uuid::Uuid::new_v4());
     let upload_bytes = connector
-        .upload_blob_bytes(&blob_name_bytes, b"sample content\n")
+        .upload_bytes(&blob_name_bytes, b"sample content\n")
         .await;
     assert!(upload_bytes.is_ok());
 
-    let bytes = connector.download_blob(&blob_name_bytes).await?;
+    let bytes = connector.download(&blob_name_bytes).await?;
     assert!(!bytes.is_empty());
     assert_eq!(bytes, b"sample content\n");
 
-    connector.delete_blob(&blob_name_bytes).await?;
+    connector.delete(&blob_name_bytes).await?;
 
     Ok(())
 }

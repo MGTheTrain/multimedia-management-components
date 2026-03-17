@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 use async_trait::async_trait;
-use models::{
+use domain::{
     container_meta::ContainerMeta,
     tracks::{AudioTrack, SubtitleTrack, VideoTrack},
 };
@@ -29,12 +29,6 @@ use uuid::Uuid;
 
 #[async_trait]
 pub trait MultimediaManagementServiceTrait {
-    async fn upload(
-        &self,
-        blob_name: &str,
-        file_path: &str,
-        tags: Vec<Option<String>>,
-    ) -> Result<ContainerMeta, Box<dyn std::error::Error + Send + Sync>>;
     async fn upload_bytes(
         &self,
         blob_name: &str,

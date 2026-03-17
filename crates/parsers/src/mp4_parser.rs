@@ -21,11 +21,11 @@
 // SOFTWARE.
 
 use chrono::Utc;
-use log::info;
-use models::{
+use domain::{
     container_meta::ContainerMeta,
     tracks::{AudioTrack, SubtitleTrack, VideoTrack},
 };
+use log::info;
 use mp4::{Mp4Track, TrackType};
 use std::fs::File;
 use std::io::BufReader;

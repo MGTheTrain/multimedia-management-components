@@ -7,9 +7,9 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
-services.workspace = true
-connectors.workspace = true
-data_access.workspace = true
+application.workspace = true
+blob-storage-connector.workspace = true
+persistence.workspace = true
 axum.workspace = true
 tokio.workspace = true
 log.workspace = true

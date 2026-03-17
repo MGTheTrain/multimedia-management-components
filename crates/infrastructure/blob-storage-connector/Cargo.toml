@@ -1,5 +1,5 @@
 [package]
-name = "connectors"
+name = "blob-storage-connector"
 version.workspace = true
 edition.workspace = true
 
@@ -7,6 +7,7 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
+domain.workspace = true
 async-trait.workspace = true
 azure_storage.workspace = true
 azure_storage_blobs.workspace = true

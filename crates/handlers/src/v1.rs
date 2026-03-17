@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+use application::mm_service_trait::MultimediaManagementServiceTrait;
 use axum::extract::Query;
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
-use services::mm_service_trait::MultimediaManagementServiceTrait;
 use std::collections::HashMap;
 use std::sync::Arc;
 

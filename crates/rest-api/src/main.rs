@@ -20,15 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+use application::mm_service::MultimediaManagementService;
 use axum::extract::DefaultBodyLimit;
 use axum::{
     routing::{delete as axum_delete, get, post},
     Router,
 };
-use connectors::aws_s3_connector::{AwsS3BucketConfig, AwsS3Connector};
-use data_access::psql_data_access::PsqlDataAccessConfig;
+use blob_storage_connector::aws_s3_connector::{AwsS3BucketConfig, AwsS3Connector};
 use handlers::v1::{delete, download, upload, AppState};
-use services::mm_service::MultimediaManagementService;
+use persistence::psql_repository::{PsqlConfig, PsqlRepository};
 use std::sync::Arc;
 
 #[tokio::main]
@@ -36,7 +36,7 @@ async fn main() {
     env_logger::init();
     dotenvy::dotenv().ok();
 
-    let connector = AwsS3Connector::new(AwsS3BucketConfig {
+    let blob = AwsS3Connector::new(AwsS3BucketConfig {
         bucket_name: std::env::var("AWS_BUCKET_NAME").expect("AWS_BUCKET_NAME not set"),
         endpoint_url: std::env::var("AWS_ENDPOINT_URL").expect("AWS_ENDPOINT_URL not set"),
         region: std::env::var("AWS_DEFAULT_REGION").expect("AWS_DEFAULT_REGION not set"),
@@ -45,21 +45,24 @@ async fn main() {
             .expect("AWS_SECRET_ACCESS_KEY not set"),
     })
     .await;
-    match connector.create_bucket().await {
-        Ok(_) => log::info!("S3 bucket created or already exists"),
+    match blob.create_bucket().await {
+        Ok(_) => log::info!("S3 bucket ready"),
         Err(e) => log::warn!("Bucket creation failed: {}", e),
     }
 
-    let service = MultimediaManagementService::new(
-        connector,
-        PsqlDataAccessConfig {
-            database_url: std::env::var("DATABASE_URL").expect("DATABASE_URL not set"),
-        },
-    )
+    let repo = PsqlRepository::new(PsqlConfig {
+        database_url: std::env::var("DATABASE_URL").expect("DATABASE_URL not set"),
+    })
     .await
-    .expect("Failed to create service");
+    .expect("Failed to connect to database");
 
-    let state: AppState = Arc::new(service);
+    let state: AppState = Arc::new(MultimediaManagementService::new(
+        Box::new(blob),
+        Box::new(repo.clone()),
+        Box::new(repo.clone()),
+        Box::new(repo.clone()),
+        Box::new(repo),
+    ));
 
     let app = Router::new()
         .route("/blobs", post(upload))
