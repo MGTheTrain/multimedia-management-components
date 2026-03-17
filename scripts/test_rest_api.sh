@@ -10,7 +10,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$BASE_URL/blobs?filename=$BLOB_N
   --data-binary "@$ASSET" \
   -H "Content-Type: video/mp4")
 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-BODY=$(echo "$RESPONSE" | head -n-1)
+BODY=$(echo "$RESPONSE" | sed '$d')
 echo "Status: $HTTP_CODE"
 echo "Body: $BODY"
 
