@@ -17,4 +17,4 @@ After `run`, check that `src/schema.rs` aligns with the domain structs in `conta
 
 ### Option B — Automatic (at runtime)
 
-`psql_data_access.rs` calls `run_pending_migrations(MIGRATIONS)` on startup via `embed_migrations!`, so no CLI steps are needed.
+`psql_repository.rs` calls `run_pending_migrations(MIGRATIONS)` on startup via `embed_migrations!`, so no CLI steps are needed.
