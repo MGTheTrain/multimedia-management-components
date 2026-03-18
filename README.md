@@ -6,8 +6,46 @@ Experimental Rust-based multimedia management components providing a REST API fo
 
 **Binaries:**
 - `rest-api` — HTTP REST API backed by PostgreSQL and S3-compatible storage
+- `grpc-api` — gRPC API backed by PostgreSQL and S3-compatible storage
 - `s3-cli` — CLI for AWS S3 blob and bucket operations
 - `azure-cli` — CLI for Azure Blob Storage container and blob operations
+
+### Architecture
+
+This project follows Clean Architecture with strict dependency inversion:
+
+```
+domain          — entities, repository traits, blob storage trait
+application     — service trait and implementation, orchestrates domain
+infrastructure  — persistence (Diesel/PostgreSQL), blob storage (S3/Azure)
+rest-handlers   — implements generated OpenAPI server trait (rust-axum)
+grpc-handlers   — implements generated gRPC server trait (tonic)
+rest-api        — binary, wires REST dependencies
+grpc-api        — binary, wires gRPC dependencies
+```
+
+### API First
+
+REST and gRPC interfaces are defined in `api/` and server code is generated from them:
+
+```
+api/openapi.json       → openapi-generator (rust-axum) → crates/rest-handlers/generated/
+api/multimedia.proto   → tonic_prost_build (build.rs)  → generated at compile time
+```
+
+To regenerate:
+```sh
+just generate-server-stubs
+```
+
+#### Ports
+| Service  | Port  |
+|----------|-------|
+| REST API | 8080  |
+| gRPC API | 50051 |
+| Postgres | 5432  |
+| LocalStack (S3) | 4566 |
+| Azurite (Azure) | 10000 |
 
 ### Quick Start
 
@@ -21,20 +59,23 @@ Experimental Rust-based multimedia management components providing a REST API fo
 ```sh
 just --list
 Available recipes:
-    azure-cli *args   # Run Azure CLI, e.g. `just azure-cli create-container`
-    clean             # Remove all Rust target build directories
-    compose-start     # Start infrastructure containers (postgres, localstack, azurite)
-    compose-start-api # Start all services including REST API
-    compose-stop      # Stop and remove docker containers
-    coverage module   # Run coverage for a given module, e.g. `just coverage data-access`
-    format            # Format Rust files
-    format-check      # Check Rust formatting without modifying files
-    lint              # Lint Rust files (warnings treated as errors)
-    run               # Start REST API server locally
-    s3-cli *args      # Run S3 CLI, e.g. `just s3-cli create-bucket`
-    test module       # Run tests for a given module, e.g. `just test models`
-    test-rest-api     # Test REST API endpoints
-    upgrade module    # Update dependencies for a given module, e.g. `just upgrade data-access`
+    azure-cli *args       # Run Azure CLI, e.g. `just azure-cli create-container`
+    clean                 # Remove all Rust target build directories
+    compose-start         # Start infrastructure containers (postgres, localstack, azurite)
+    compose-start-api     # Start all services including REST API
+    compose-stop          # Stop and remove docker containers
+    coverage module       # Run coverage for a given module, e.g. `just coverage infrastructure/persistence`
+    format                # Format Rust files
+    format-check          # Check Rust formatting without modifying files
+    generate-server-stubs # Generate gRPC and REST server code from api/ specs
+    lint                  # Lint Rust files (warnings treated as errors)
+    run-grpc-api          # Start gRPC API server locally
+    run-rest-api          # Start REST API server locally
+    s3-cli *args          # Run S3 CLI, e.g. `just s3-cli create-bucket`
+    test module           # Run tests for a given module, e.g. `just test domain`
+    test-grpc-api         # Test gRPC endpoints
+    test-rest-api         # Test REST API endpoints
+    upgrade module        # Update dependencies for a given module, e.g. `just upgrade infrastructure/persistence`
 ```
 
 #### Running REST API locally
@@ -48,14 +89,30 @@ export AWS_ACCESS_KEY_ID="test"
 export AWS_SECRET_ACCESS_KEY="test"
 export DATABASE_URL="postgres://user:password@localhost:5432/diesel-demo"
 
-RUST_LOG=info just run
+RUST_LOG=info just run-rest-api
 just test-rest-api # Test REST API endpoints
 ```
 
-#### Running REST API via Docker
+#### Running gRPC API locally
+```sh
+just compose-start
+
+export AWS_BUCKET_NAME="test-bucket"
+export AWS_ENDPOINT_URL="http://127.0.0.1:4566"
+export AWS_DEFAULT_REGION="us-east-1"
+export AWS_ACCESS_KEY_ID="test"
+export AWS_SECRET_ACCESS_KEY="test"
+export DATABASE_URL="postgres://user:password@localhost:5432/diesel-demo"
+
+RUST_LOG=info just run-grpc-api
+just test-grpc-api # Test gRPC API endpoints
+```
+
+#### Running REST and gRPC APIs via Docker
 ```sh
 just compose-start-api
 just test-rest-api # Test REST API endpoints
+just test-grpc-api # Test REST gRPC endpoints
 ```
 
 #### Invoking CLI commands

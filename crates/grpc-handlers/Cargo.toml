@@ -1,0 +1,19 @@
+[package]
+name = "grpc-handlers"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+application.workspace = true
+domain.workspace = true
+tonic.workspace = true
+prost.workspace = true
+tonic-prost.workspace = true
+uuid.workspace = true
+log.workspace = true
+
+[build-dependencies]
+tonic-prost-build = "0.14"

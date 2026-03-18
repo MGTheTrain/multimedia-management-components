@@ -27,6 +27,9 @@ jobs:
       - name: Format check
         run: just format-check
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+
       - name: Lint
         run: just lint
 
@@ -69,6 +72,10 @@ jobs:
       - name: Test application
         run: just test application
 
-      # TODO: fix e2e-test
-      # - name: Test handlers
-      #   run: just test handlers
+      # TODO: setup e2e-test with axum-test crate
+      # - name: Test rest-handlers
+      #   run: just test rest-handlers
+
+      # TODO: setup e2e-test with proper crate
+      # - name: Test grpc-handlers
+      #   run: just test grpc-handlers

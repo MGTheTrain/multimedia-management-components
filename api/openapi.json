@@ -1,0 +1,80 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Multimedia Management API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/blobs": {
+      "post": {
+        "operationId": "uploadBlob",
+        "summary": "Upload a blob",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": { "type": "string", "format": "binary" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UploadResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" }
+        }
+      }
+    },
+    "/blobs/{container_meta_id}": {
+      "get": {
+        "operationId": "downloadBlob",
+        "summary": "Download a blob",
+        "parameters": [
+          { "name": "container_meta_id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/octet-stream": { "schema": { "type": "string", "format": "binary" } } }
+          },
+          "404": { "description": "Not Found" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteBlob",
+        "summary": "Delete a blob",
+        "parameters": [
+          { "name": "container_meta_id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "No Content" },
+          "404": { "description": "Not Found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" }
+        },
+        "required": ["id"]
+      }
+    }
+  }
+}

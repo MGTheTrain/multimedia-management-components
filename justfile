@@ -35,7 +35,7 @@ compose-stop:
     docker compose -f infra/compose/docker-compose.yml --profile api down -v
 
 # Start REST API server locally
-run:
+run-rest-api:
     cargo run --release --bin rest-api
 
 # Run S3 CLI, e.g. `just s3-cli create-bucket`
@@ -49,6 +49,18 @@ azure-cli *args:
 # Test REST API endpoints
 test-rest-api:
     bash scripts/test_rest_api.sh
+
+# Generate gRPC and REST server code from api/ specs
+generate-server-stubs:
+    bash scripts/generate.sh
+
+# Start gRPC API server locally
+run-grpc-api:
+    cargo run --release --bin grpc-api
+
+# Test gRPC endpoints
+test-grpc-api:
+    bash scripts/test_grpc_api.sh
 
 # Remove all Rust target build directories
 clean:

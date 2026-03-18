@@ -21,14 +21,16 @@
 // SOFTWARE.
 
 use application::mm_service::MultimediaManagementService;
-use axum::extract::DefaultBodyLimit;
 use blob_storage_connector::aws_s3_connector::{AwsS3BucketConfig, AwsS3Connector};
+use grpc_handlers::v1::{
+    multimedia::multimedia_service_server::MultimediaServiceServer, MultimediaGrpcService,
+};
 use persistence::psql_repository::{PsqlConfig, PsqlRepository};
-use rest_handlers::v1::{AppState, MultimediaApi};
 use std::sync::Arc;
+use tonic::transport::Server;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
     dotenvy::dotenv().ok();
 
@@ -47,9 +49,9 @@ async fn main() {
         database_url: std::env::var("DATABASE_URL").expect("DATABASE_URL not set"),
     })
     .await
-    .expect("Failed to connect to database");
+    .expect("Failed to connect");
 
-    let service: AppState = Arc::new(MultimediaManagementService::new(
+    let service = Arc::new(MultimediaManagementService::new(
         Box::new(blob),
         Box::new(repo.clone()),
         Box::new(repo.clone()),
@@ -57,12 +59,16 @@ async fn main() {
         Box::new(repo),
     ));
 
-    let api = Arc::new(MultimediaApi { service });
+    let addr = "0.0.0.0:50051".parse()?;
+    log::info!("gRPC server listening on {}", addr);
 
-    // use the generated router directly — no manual route wiring needed
-    let app = openapi::server::new(api).layer(DefaultBodyLimit::max(100 * 1024 * 1024));
+    Server::builder()
+        .add_service(
+            MultimediaServiceServer::new(MultimediaGrpcService { service })
+                .max_decoding_message_size(100 * 1024 * 1024),
+        )
+        .serve(addr)
+        .await?;
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
-    log::info!("Listening on 0.0.0.0:8080");
-    axum::serve(listener, app).await.unwrap();
+    Ok(())
 }

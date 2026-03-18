@@ -1,21 +1,22 @@
 [package]
-name = "handlers"
+name = "grpc-api"
 version.workspace = true
 edition.workspace = true
 
 [lints]
 workspace = true
 
+[[bin]]
+name = "grpc-api"
+path = "src/main.rs"
+
 [dependencies]
 application.workspace = true
 blob-storage-connector.workspace = true
 persistence.workspace = true
-axum.workspace = true
+grpc-handlers.workspace = true
 tokio.workspace = true
 log.workspace = true
-serde_json.workspace = true
-
-[dev-dependencies]
 env_logger.workspace = true
-axum-test = "19"
-tokio.workspace = true
+dotenvy.workspace = true
+tonic.workspace = true

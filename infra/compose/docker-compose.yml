@@ -88,6 +88,31 @@ services:
       - custom-network
     restart: on-failure
 
+  grpc-api:
+    profiles:
+      - api
+    build:
+      context: ../..
+      dockerfile: infra/docker/grpc-api/Dockerfile
+    environment:
+      - AWS_BUCKET_NAME=test-bucket
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DATABASE_URL=postgres://user:password@postgres:5432/diesel-demo
+      - RUST_LOG=info
+    ports:
+      - "50051:50051"
+    depends_on:
+      postgres:
+        condition: service_started
+      localstack-init:
+        condition: service_completed_successfully
+    networks:
+      - custom-network
+    restart: on-failure
+
 volumes:
   postgres-db:
   azurite-data:

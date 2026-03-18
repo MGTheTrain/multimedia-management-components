@@ -5,10 +5,13 @@ members = [
     "crates/infrastructure/blob-storage-connector",
     "crates/infrastructure/persistence",
     "crates/application",
-    "crates/handlers",
+    "crates/rest-handlers/generated/rest-server",
+    "crates/rest-handlers",
     "crates/rest-api",
     "crates/s3-cli",
-    "crates/azure-cli", 
+    "crates/azure-cli",
+    "crates/grpc-handlers",  
+    "crates/grpc-api", 
 ]
 resolver = "2"
 
@@ -31,7 +34,9 @@ parsers = { path = "crates/parsers" }
 blob-storage-connector = { path = "crates/infrastructure/blob-storage-connector" }
 persistence = { path = "crates/infrastructure/persistence" }
 application = { path = "crates/application" }
-handlers = { path = "crates/handlers" }
+openapi = { path = "crates/rest-handlers/generated/rest-server" }
+rest-handlers = { path = "crates/rest-handlers" }
+grpc-handlers = { path = "crates/grpc-handlers" }
 
 # external
 async-trait = "0.1"
@@ -51,6 +56,10 @@ aws-config = "1"
 aws-sdk-s3 = "1"
 azure_storage = "0.21"
 azure_storage_blobs = "0.21"
+tonic = "0.14.5"
+prost = "0.14.3"
+tonic-prost = "0.14"
+tonic-prost-build = "0.14"
 
 [profile.dev]
 panic = "abort"

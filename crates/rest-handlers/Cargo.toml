@@ -1,0 +1,19 @@
+[package]
+name = "rest-handlers"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+application.workspace = true
+openapi.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+axum-extra = { version = "0.12", features = ["typed-header", "cookie", "query"] }
+bytes = "1"
+headers = "0.4"
+http = "1"
+uuid.workspace = true
+log.workspace = true
