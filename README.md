@@ -2,7 +2,7 @@
 
 ### Summary
 
-Experimental Rust-based multimedia management components providing a REST API for uploading, storing and retrieving multimedia files with parsed track metadata, alongside CLI tools for direct blob storage operations on AWS S3 and Azure Blob Storage.
+Experimental Rust-based multimedia management components providing a REST and gRPC API for uploading, storing and retrieving multimedia files with parsed track metadata, alongside CLI tools for direct blob storage operations on AWS S3 and Azure Blob Storage.
 
 **Binaries:**
 - `rest-api` — HTTP REST API backed by PostgreSQL and S3-compatible storage
@@ -147,7 +147,7 @@ just azure-cli delete-blob --blob-name nature.mp4
 
 #### Binary size
 
-Rust's standard library and pure-Rust dependencies are statically linked by default. However, this project dynamically links to native C libraries, `libpq` (PostgreSQL client) and `libssl` (OpenSSL), via FFI. Those libraries must be present on the host at runtime (see [Docker runtime image](./infra/docker/Dockerfile) installing `libpq5` and `libssl3`).
+Rust's standard library and pure-Rust dependencies are statically linked by default. However, this project dynamically links to native C libraries, `libpq` (PostgreSQL client) and `libssl` (OpenSSL), via FFI. Those libraries must be present on the host at runtime (see [Docker image](./infra/docker/rest-api/Dockerfile) installing `libpq5` and `libssl3`).
 
 ```sh
 cargo build --release --bin rest-api
