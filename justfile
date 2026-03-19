@@ -14,19 +14,19 @@ upgrade module:
 format:
     cargo fmt
 
-# Check Rust formatting without modifying files
-format-check:
-    cargo fmt --check
+# Run pre-commit hooks on all files (includes fmt, clippy, shfmt, codespell)
+pre-commit:
+    pre-commit run --all-files
 
-# Lint Rust files (warnings treated as errors)
-lint:
-    cargo clippy -- -D warnings
+# Install pre-commit hooks
+pre-commit-install:
+    pre-commit install
 
 # Start infrastructure containers (postgres, localstack, azurite)
 compose-start:
     docker compose -f infra/compose/docker-compose.yml up -d
 
-# Start all services including REST API
+# Start all services including REST and gRPC APIs
 compose-start-api:
     docker compose -f infra/compose/docker-compose.yml --profile api up -d --build
 
@@ -37,6 +37,10 @@ compose-stop:
 # Start REST API server locally
 run-rest-api:
     cargo run --release --bin rest-api
+
+# Start gRPC API server locally
+run-grpc-api:
+    cargo run --release --bin grpc-api
 
 # Run S3 CLI, e.g. `just s3-cli create-bucket`
 s3-cli *args:
@@ -50,17 +54,13 @@ azure-cli *args:
 test-rest-api:
     bash scripts/test_rest_api.sh
 
-# Generate gRPC and REST server code from api/ specs
-generate-server-stubs:
-    bash scripts/generate.sh
-
-# Start gRPC API server locally
-run-grpc-api:
-    cargo run --release --bin grpc-api
-
 # Test gRPC endpoints
 test-grpc-api:
     bash scripts/test_grpc_api.sh
+
+# Generate gRPC and REST server code from api/ specs
+generate-server-stubs:
+    bash scripts/generate.sh
 
 # Remove all Rust target build directories
 clean:

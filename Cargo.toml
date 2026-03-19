@@ -10,8 +10,8 @@ members = [
     "crates/rest-api",
     "crates/s3-cli",
     "crates/azure-cli",
-    "crates/grpc-handlers",  
-    "crates/grpc-api", 
+    "crates/grpc-handlers",
+    "crates/grpc-api",
 ]
 resolver = "2"
 

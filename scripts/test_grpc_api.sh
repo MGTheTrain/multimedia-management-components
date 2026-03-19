@@ -14,9 +14,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
   BASE64_DATA=$(base64 -w 0 "$ASSET")
 fi
-echo "{\"blob_name\": \"$BLOB_NAME\", \"data\": \"$BASE64_DATA\", \"tags\": [\"nature\"]}" > "$TMP_PAYLOAD"
+echo "{\"blob_name\": \"$BLOB_NAME\", \"data\": \"$BASE64_DATA\", \"tags\": [\"nature\"]}" >"$TMP_PAYLOAD"
 UPLOAD_RESPONSE=$(grpcurl -plaintext -proto "$PROTO" \
-  -d @ "$GRPC_URL" multimedia.MultimediaService/UploadBlob < "$TMP_PAYLOAD")
+  -d @ "$GRPC_URL" multimedia.MultimediaService/UploadBlob <"$TMP_PAYLOAD")
 echo "Response: $UPLOAD_RESPONSE"
 
 CONTAINER_META_ID=$(echo "$UPLOAD_RESPONSE" | grep -o '"id": "[^"]*"' | cut -d'"' -f4)
@@ -39,11 +39,11 @@ DOWNLOAD_RESPONSE=$(grpcurl -plaintext -proto "$PROTO" \
   -d "{\"container_meta_id\": \"$CONTAINER_META_ID\"}" \
   "$GRPC_URL" multimedia.MultimediaService/DownloadBlob)
 
-echo "$DOWNLOAD_RESPONSE" | grep -o '"data": "[^"]*"' | cut -d'"' -f4 | base64 -d > /tmp/downloaded_nature.mp4
-echo "Downloaded to /tmp/downloaded_nature.mp4 ($(wc -c < /tmp/downloaded_nature.mp4) bytes)"
+echo "$DOWNLOAD_RESPONSE" | grep -o '"data": "[^"]*"' | cut -d'"' -f4 | base64 -d >/tmp/downloaded_nature.mp4
+echo "Downloaded to /tmp/downloaded_nature.mp4 ($(wc -c </tmp/downloaded_nature.mp4) bytes)"
 
-ORIGINAL_SIZE=$(wc -c < "$ASSET")
-DOWNLOADED_SIZE=$(wc -c < /tmp/downloaded_nature.mp4)
+ORIGINAL_SIZE=$(wc -c <"$ASSET")
+DOWNLOADED_SIZE=$(wc -c </tmp/downloaded_nature.mp4)
 echo "Original size:   $ORIGINAL_SIZE bytes"
 echo "Downloaded size: $DOWNLOADED_SIZE bytes"
 if [ "$ORIGINAL_SIZE" != "$DOWNLOADED_SIZE" ]; then

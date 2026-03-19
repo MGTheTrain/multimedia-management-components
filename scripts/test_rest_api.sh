@@ -29,11 +29,11 @@ echo "Status: $HTTP_CODE"
 if [ "$HTTP_CODE" != "200" ]; then
   echo "Download failed!" && exit 1
 fi
-echo "Downloaded to /tmp/downloaded_nature.mp4 ($(wc -c < /tmp/downloaded_nature.mp4) bytes)"
+echo "Downloaded to /tmp/downloaded_nature.mp4 ($(wc -c </tmp/downloaded_nature.mp4) bytes)"
 
 # Verify size matches original
-ORIGINAL_SIZE=$(wc -c < "$ASSET")
-DOWNLOADED_SIZE=$(wc -c < /tmp/downloaded_nature.mp4)
+ORIGINAL_SIZE=$(wc -c <"$ASSET")
+DOWNLOADED_SIZE=$(wc -c </tmp/downloaded_nature.mp4)
 echo "Original:   $ORIGINAL_SIZE bytes"
 echo "Downloaded: $DOWNLOADED_SIZE bytes"
 if [ "$ORIGINAL_SIZE" != "$DOWNLOADED_SIZE" ]; then

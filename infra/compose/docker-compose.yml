@@ -45,7 +45,7 @@ services:
         condition: service_healthy
     networks:
       - custom-network
-      
+
   azure-blob-storage:
     image: mcr.microsoft.com/azure-storage/azurite:3.35.0
     container_name: azure-blob-storage

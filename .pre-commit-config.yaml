@@ -1,0 +1,47 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.12.0-2
+    hooks:
+      - id: shfmt
+        args: [-w, -i, "2", -ci]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        args: ["--ignore-words-list=.codespell-ignore-words", "-w"]
+        files: \.md$
+        exclude: ^(.*\.lock|infra/)
+
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt check
+        entry: cargo fmt -- --check
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+default_install_hook_types: [pre-commit, commit-msg]
+fail_fast: true

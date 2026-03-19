@@ -62,13 +62,13 @@ Available recipes:
     azure-cli *args       # Run Azure CLI, e.g. `just azure-cli create-container`
     clean                 # Remove all Rust target build directories
     compose-start         # Start infrastructure containers (postgres, localstack, azurite)
-    compose-start-api     # Start all services including REST API
+    compose-start-api     # Start all services including REST and gRPC APIs
     compose-stop          # Stop and remove docker containers
     coverage module       # Run coverage for a given module, e.g. `just coverage infrastructure/persistence`
     format                # Format Rust files
-    format-check          # Check Rust formatting without modifying files
     generate-server-stubs # Generate gRPC and REST server code from api/ specs
-    lint                  # Lint Rust files (warnings treated as errors)
+    pre-commit            # Run pre-commit hooks on all files (includes fmt, clippy, shfmt, codespell)
+    pre-commit-install    # Install pre-commit hooks
     run-grpc-api          # Start gRPC API server locally
     run-rest-api          # Start REST API server locally
     s3-cli *args          # Run S3 CLI, e.g. `just s3-cli create-bucket`

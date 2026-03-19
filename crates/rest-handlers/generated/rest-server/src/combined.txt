@@ -869,7 +869,7 @@ pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::Error
     /// DeleteBlob - DELETE /blobs/{container_meta_id}
     async fn delete_blob(
     &self,
-    
+
     method: &Method,
     host: &Host,
     cookies: &CookieJar,
@@ -881,7 +881,7 @@ pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::Error
     /// DownloadBlob - GET /blobs/{container_meta_id}
     async fn download_blob(
     &self,
-    
+
     method: &Method,
     host: &Host,
     cookies: &CookieJar,
@@ -893,7 +893,7 @@ pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::Error
     /// UploadBlob - POST /blobs
     async fn upload_blob(
     &self,
-    
+
     method: &Method,
     host: &Host,
     cookies: &CookieJar,
@@ -1334,7 +1334,7 @@ where
     I: AsRef<A> + Clone + Send + Sync + 'static,
     A: apis::default::Default<E> + Send + Sync + 'static,
     E: std::fmt::Debug + Send + Sync + 'static,
-    
+
 {
     // build our application with a route
     Router::new()
@@ -1398,7 +1398,7 @@ where
 
 
 let result = api_impl.as_ref().delete_blob(
-      
+
       &method,
       &host,
       &cookies,
@@ -1482,7 +1482,7 @@ where
 
 
 let result = api_impl.as_ref().download_blob(
-      
+
       &method,
       &host,
       &cookies,
@@ -1587,7 +1587,7 @@ where
 
 
 let result = api_impl.as_ref().upload_blob(
-      
+
       &method,
       &host,
       &cookies,

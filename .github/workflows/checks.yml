@@ -24,14 +24,14 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v2
 
-      - name: Format check
-        run: just format-check
-
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
 
-      - name: Lint
-        run: just lint
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit
+        run: just pre-commit
 
   test:
     name: Test
@@ -47,7 +47,7 @@ jobs:
         uses: extractions/setup-just@v2
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libpq-dev libssl-dev pkg-config
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev libssl-dev pkg-config protobuf-compiler
 
       - name: Start services
         run: just compose-start
@@ -71,11 +71,3 @@ jobs:
 
       - name: Test application
         run: just test application
-
-      # TODO: setup e2e-test with axum-test crate
-      # - name: Test rest-handlers
-      #   run: just test rest-handlers
-
-      # TODO: setup e2e-test with proper crate
-      # - name: Test grpc-handlers
-      #   run: just test grpc-handlers
