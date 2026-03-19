@@ -119,36 +119,39 @@ impl BlobStorageConnector for AwsS3Connector {
     }
 }
 
-#[tokio::test]
-async fn test_aws_s3_connector() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(test)]
+mod tests {
+    use super::*;
     use std::io::Write;
     use tempfile::NamedTempFile;
+    #[tokio::test]
+    async fn test_aws_s3_connector() -> Result<(), Box<dyn std::error::Error>> {
+        let config = AwsS3BucketConfig {
+            bucket_name: String::from("test-bucket"),
+            endpoint_url: String::from("http://127.0.0.1:4566"),
+            region: String::from("us-east-1"),
+            access_key_id: String::from("test"),
+            secret_access_key: String::from("test"),
+        };
+        let connector = AwsS3Connector::new(config).await;
+        connector.create_bucket().await?;
 
-    let config = AwsS3BucketConfig {
-        bucket_name: String::from("test-bucket"),
-        endpoint_url: String::from("http://127.0.0.1:4566"),
-        region: String::from("us-east-1"),
-        access_key_id: String::from("test"),
-        secret_access_key: String::from("test"),
-    };
-    let connector = AwsS3Connector::new(config).await;
-    connector.create_bucket().await?;
+        let mut tmp = NamedTempFile::new()?;
+        writeln!(tmp, "sample content")?;
 
-    let mut tmp = NamedTempFile::new()?;
-    writeln!(tmp, "sample content")?;
+        // upload from bytes
+        let blob_name_bytes = format!("{}/sample_bytes.txt", uuid::Uuid::new_v4());
+        let upload_bytes = connector
+            .upload_bytes(&blob_name_bytes, b"sample content\n")
+            .await;
+        assert!(upload_bytes.is_ok());
 
-    // upload from bytes
-    let blob_name_bytes = format!("{}/sample_bytes.txt", uuid::Uuid::new_v4());
-    let upload_bytes = connector
-        .upload_bytes(&blob_name_bytes, b"sample content\n")
-        .await;
-    assert!(upload_bytes.is_ok());
+        let bytes = connector.download(&blob_name_bytes).await?;
+        assert!(!bytes.is_empty());
+        assert_eq!(bytes, b"sample content\n");
 
-    let bytes = connector.download(&blob_name_bytes).await?;
-    assert!(!bytes.is_empty());
-    assert_eq!(bytes, b"sample content\n");
+        connector.delete(&blob_name_bytes).await?;
 
-    connector.delete(&blob_name_bytes).await?;
-
-    Ok(())
+        Ok(())
+    }
 }
