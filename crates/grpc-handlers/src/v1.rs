@@ -22,7 +22,7 @@
 
 use application::mm_service_trait::MultimediaManagementServiceTrait;
 use std::sync::Arc;
-use tonic::{Request, Response, Status};
+use tonic::{Request, Response, Status, Streaming};
 use uuid::Uuid;
 
 pub mod multimedia {
@@ -40,12 +40,33 @@ pub struct MultimediaGrpcService {
 impl MultimediaService for MultimediaGrpcService {
     async fn upload_blob(
         &self,
-        request: Request<UploadBlobRequest>,
+        request: Request<Streaming<UploadBlobRequest>>,
     ) -> Result<Response<UploadBlobResponse>, Status> {
-        let req = request.into_inner();
-        let tags = req.tags.into_iter().map(Some).collect();
+        let mut stream = request.into_inner();
+
+        let mut blob_name = String::new();
+        let mut tags: Vec<Option<String>> = vec![];
+        let mut data: Vec<u8> = vec![];
+
+        while let Some(msg) = stream.message().await? {
+            match msg.data {
+                Some(upload_blob_request::Data::Info(info)) => {
+                    blob_name = info.blob_name;
+                    tags = info.tags.into_iter().map(Some).collect();
+                }
+                Some(upload_blob_request::Data::Chunk(chunk)) => {
+                    data.extend_from_slice(&chunk);
+                }
+                None => {}
+            }
+        }
+
+        if blob_name.is_empty() {
+            return Err(Status::invalid_argument("BlobInfo must be sent first"));
+        }
+
         self.service
-            .upload_bytes(&req.blob_name, &req.data, tags)
+            .upload_bytes(&blob_name, &data, tags)
             .await
             .map(|meta| {
                 Response::new(UploadBlobResponse {
@@ -60,42 +81,22 @@ impl MultimediaService for MultimediaGrpcService {
         request: Request<DownloadBlobRequest>,
     ) -> Result<Response<DownloadBlobResponse>, Status> {
         let req = request.into_inner();
-        let id = Uuid::parse_str(&req.container_meta_id)
-            .map_err(|e| Status::invalid_argument(e.to_string()))?;
+        let id = Uuid::parse_str(&req.id).map_err(|e| Status::invalid_argument(e.to_string()))?;
         let meta = self
             .service
             .get_container_meta(&id)
             .await
             .map_err(|e| Status::not_found(e.to_string()))?;
         self.service
-            .download(&req.container_meta_id, &meta.title)
+            .download(&req.id, &meta.title)
             .await
             .map(|data| Response::new(DownloadBlobResponse { data }))
             .map_err(|e| Status::not_found(e.to_string()))
     }
 
-    async fn delete_blob(
+    async fn get_blob(
         &self,
-        request: Request<DeleteBlobRequest>,
-    ) -> Result<Response<DeleteBlobResponse>, Status> {
-        let req = request.into_inner();
-        let id = Uuid::parse_str(&req.container_meta_id)
-            .map_err(|e| Status::invalid_argument(e.to_string()))?;
-        let meta = self
-            .service
-            .get_container_meta(&id)
-            .await
-            .map_err(|e| Status::not_found(e.to_string()))?;
-        self.service
-            .delete(&req.container_meta_id, &meta.title)
-            .await
-            .map(|_| Response::new(DeleteBlobResponse {}))
-            .map_err(|e| Status::internal(e.to_string()))
-    }
-
-    async fn get_container_meta(
-        &self,
-        request: Request<GetContainerMetaRequest>,
+        request: Request<GetBlobRequest>,
     ) -> Result<Response<ContainerMetaResponse>, Status> {
         let id = Uuid::parse_str(&request.into_inner().id)
             .map_err(|e| Status::invalid_argument(e.to_string()))?;
@@ -112,5 +113,23 @@ impl MultimediaService for MultimediaGrpcService {
                 })
             })
             .map_err(|e| Status::not_found(e.to_string()))
+    }
+
+    async fn delete_blob(
+        &self,
+        request: Request<DeleteBlobRequest>,
+    ) -> Result<Response<DeleteBlobResponse>, Status> {
+        let req = request.into_inner();
+        let id = Uuid::parse_str(&req.id).map_err(|e| Status::invalid_argument(e.to_string()))?;
+        let meta = self
+            .service
+            .get_container_meta(&id)
+            .await
+            .map_err(|e| Status::not_found(e.to_string()))?;
+        self.service
+            .delete(&req.id, &meta.title)
+            .await
+            .map(|_| Response::new(DeleteBlobResponse {}))
+            .map_err(|e| Status::internal(e.to_string()))
     }
 }

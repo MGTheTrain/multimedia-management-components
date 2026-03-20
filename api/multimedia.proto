@@ -2,16 +2,24 @@ syntax = "proto3";
 package multimedia;
 
 service MultimediaService {
-    rpc UploadBlob (UploadBlobRequest) returns (UploadBlobResponse);
+    // Custom methods (AIP-136)
+    rpc UploadBlob (stream UploadBlobRequest) returns (UploadBlobResponse);
     rpc DownloadBlob (DownloadBlobRequest) returns (DownloadBlobResponse);
+    // Standard methods (AIP-131, AIP-135)
+    rpc GetBlob (GetBlobRequest) returns (ContainerMetaResponse);
     rpc DeleteBlob (DeleteBlobRequest) returns (DeleteBlobResponse);
-    rpc GetContainerMeta (GetContainerMetaRequest) returns (ContainerMetaResponse);
 }
 
 message UploadBlobRequest {
+    oneof data {
+        BlobInfo info = 1;
+        bytes chunk = 2;
+    }
+}
+
+message BlobInfo {
     string blob_name = 1;
-    bytes data = 2;
-    repeated string tags = 3;
+    repeated string tags = 2;
 }
 
 message UploadBlobResponse {
@@ -19,22 +27,22 @@ message UploadBlobResponse {
 }
 
 message DownloadBlobRequest {
-    string container_meta_id = 1;
+    string id = 1;
 }
 
 message DownloadBlobResponse {
     bytes data = 1;
 }
 
+message GetBlobRequest {
+    string id = 1;
+}
+
 message DeleteBlobRequest {
-    string container_meta_id = 1;
+    string id = 1;
 }
 
 message DeleteBlobResponse {}
-
-message GetContainerMetaRequest {
-    string id = 1;
-}
 
 message ContainerMetaResponse {
     string id = 1;

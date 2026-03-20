@@ -31,9 +31,22 @@ pub enum DownloadBlobResponse {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
+pub enum GetBlobMetadataResponse {
+    /// OK
+    Status200_OK(models::ContainerMetaResponse),
+    /// Not Found
+    Status404_NotFound,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
 pub enum UploadBlobResponse {
     /// Created
-    Status201_Created(models::UploadResponse),
+    Status201_Created {
+        body: models::UploadResponse,
+        location: Option<String>,
+    },
     /// Bad Request
     Status400_BadRequest,
 }
@@ -44,7 +57,7 @@ pub enum UploadBlobResponse {
 pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::ErrorHandler<E> {
     /// Delete a blob.
     ///
-    /// DeleteBlob - DELETE /blobs/{container_meta_id}
+    /// DeleteBlob - DELETE /blobs/{id}
     async fn delete_blob(
         &self,
 
@@ -56,7 +69,7 @@ pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::Error
 
     /// Download a blob.
     ///
-    /// DownloadBlob - GET /blobs/{container_meta_id}
+    /// DownloadBlob - GET /blobs/{id}
     async fn download_blob(
         &self,
 
@@ -65,6 +78,18 @@ pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::Error
         cookies: &CookieJar,
         path_params: &models::DownloadBlobPathParams,
     ) -> Result<DownloadBlobResponse, E>;
+
+    /// Get blob metadata.
+    ///
+    /// GetBlobMetadata - GET /blobs/{id}/metadata
+    async fn get_blob_metadata(
+        &self,
+
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        path_params: &models::GetBlobMetadataPathParams,
+    ) -> Result<GetBlobMetadataResponse, E>;
 
     /// Upload a blob.
     ///
@@ -75,7 +100,7 @@ pub trait Default<E: std::fmt::Debug + Send + Sync + 'static = ()>: super::Error
         method: &Method,
         host: &Host,
         cookies: &CookieJar,
-        query_params: &models::UploadBlobQueryParams,
+        header_params: &models::UploadBlobHeaderParams,
         body: &Bytes,
     ) -> Result<UploadBlobResponse, E>;
 }

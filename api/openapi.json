@@ -11,9 +11,10 @@
         "summary": "Upload a blob",
         "parameters": [
           {
-            "name": "filename",
-            "in": "query",
+            "name": "Content-Disposition",
+            "in": "header",
             "required": true,
+            "description": "e.g. attachment; filename=\"nature.mp4\"",
             "schema": { "type": "string" }
           }
         ],
@@ -28,6 +29,12 @@
         "responses": {
           "201": {
             "description": "Created",
+            "headers": {
+              "Location": {
+                "description": "URL of the created blob resource",
+                "schema": { "type": "string", "example": "/blobs/38c3520c-2e49-4c55-89ef-b6de65b89c64" }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/UploadResponse" }
@@ -38,12 +45,12 @@
         }
       }
     },
-    "/blobs/{container_meta_id}": {
+    "/blobs/{id}": {
       "get": {
         "operationId": "downloadBlob",
         "summary": "Download a blob",
         "parameters": [
-          { "name": "container_meta_id", "in": "path", "required": true, "schema": { "type": "string" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
         ],
         "responses": {
           "200": {
@@ -57,10 +64,30 @@
         "operationId": "deleteBlob",
         "summary": "Delete a blob",
         "parameters": [
-          { "name": "container_meta_id", "in": "path", "required": true, "schema": { "type": "string" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
         ],
         "responses": {
           "204": { "description": "No Content" },
+          "404": { "description": "Not Found" }
+        }
+      }
+    },
+    "/blobs/{id}/metadata": {
+      "get": {
+        "operationId": "getBlobMetadata",
+        "summary": "Get blob metadata",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ContainerMetaResponse" }
+              }
+            }
+          },
           "404": { "description": "Not Found" }
         }
       }
@@ -74,6 +101,20 @@
           "id": { "type": "string", "format": "uuid" }
         },
         "required": ["id"]
+      },
+      "ContainerMetaResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "fileSizeInKb": { "type": "integer", "format": "int64" },
+          "duration": { "type": "number", "format": "double" },
+          "dateTimeCreated": { "type": "string", "format": "date-time" },
+          "dateTimeUpdated": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "title", "fileSizeInKb", "duration"]
       }
     }
   }

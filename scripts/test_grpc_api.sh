@@ -8,13 +8,17 @@ BLOB_NAME="nature.mp4"
 TMP_PAYLOAD="/tmp/grpc_upload_payload.json"
 
 echo "=== Upload ==="
-# macOS uses -i for input file, Linux uses -w 0 to disable line wrapping
 if [[ "$OSTYPE" == "darwin"* ]]; then
   BASE64_DATA=$(base64 -i "$ASSET")
 else
   BASE64_DATA=$(base64 -w 0 "$ASSET")
 fi
-echo "{\"blob_name\": \"$BLOB_NAME\", \"data\": \"$BASE64_DATA\", \"tags\": [\"nature\"]}" >"$TMP_PAYLOAD"
+
+# Streaming upload: send info first, then chunk
+# grpcurl supports streaming with multiple JSON messages separated by newlines
+printf '{"info": {"blob_name": "%s", "tags": ["nature"]}}\n{"chunk": "%s"}' \
+  "$BLOB_NAME" "$BASE64_DATA" >"$TMP_PAYLOAD"
+
 UPLOAD_RESPONSE=$(grpcurl -plaintext -proto "$PROTO" \
   -d @ "$GRPC_URL" multimedia.MultimediaService/UploadBlob <"$TMP_PAYLOAD")
 echo "Response: $UPLOAD_RESPONSE"
@@ -26,17 +30,17 @@ if [ -z "$CONTAINER_META_ID" ]; then
 fi
 
 echo ""
-echo "=== Get Container Meta ==="
+echo "=== Get Blob Metadata ==="
 META_RESPONSE=$(grpcurl -plaintext -proto "$PROTO" \
   -d "{\"id\": \"$CONTAINER_META_ID\"}" \
-  "$GRPC_URL" multimedia.MultimediaService/GetContainerMeta)
+  "$GRPC_URL" multimedia.MultimediaService/GetBlob)
 echo "Response: $META_RESPONSE"
 
 echo ""
 echo "=== Download ==="
 DOWNLOAD_RESPONSE=$(grpcurl -plaintext -proto "$PROTO" \
   -max-msg-sz 104857600 \
-  -d "{\"container_meta_id\": \"$CONTAINER_META_ID\"}" \
+  -d "{\"id\": \"$CONTAINER_META_ID\"}" \
   "$GRPC_URL" multimedia.MultimediaService/DownloadBlob)
 
 echo "$DOWNLOAD_RESPONSE" | grep -o '"data": "[^"]*"' | cut -d'"' -f4 | base64 -d >/tmp/downloaded_nature.mp4
@@ -54,7 +58,7 @@ echo "Size check passed"
 echo ""
 echo "=== Delete ==="
 grpcurl -plaintext -proto "$PROTO" \
-  -d "{\"container_meta_id\": \"$CONTAINER_META_ID\"}" \
+  -d "{\"id\": \"$CONTAINER_META_ID\"}" \
   "$GRPC_URL" multimedia.MultimediaService/DeleteBlob
 echo "Deleted successfully"
 

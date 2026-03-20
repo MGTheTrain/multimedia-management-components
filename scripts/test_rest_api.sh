@@ -6,9 +6,10 @@ ASSET="assets/nature.mp4"
 BLOB_NAME="nature.mp4"
 
 echo "=== Upload ==="
-RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$BASE_URL/blobs?filename=$BLOB_NAME" \
+RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$BASE_URL/blobs" \
   --data-binary "@$ASSET" \
-  -H "Content-Type: application/octet-stream")
+  -H "Content-Type: application/octet-stream" \
+  -H "Content-Disposition: attachment; filename=\"$BLOB_NAME\"")
 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
 BODY=$(echo "$RESPONSE" | sed '$d')
 echo "Status: $HTTP_CODE"

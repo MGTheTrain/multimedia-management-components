@@ -44,26 +44,30 @@ impl openapi::apis::ErrorHandler<()> for MultimediaApi {}
 
 #[async_trait::async_trait]
 impl openapi::apis::default::Default<()> for MultimediaApi {
-    async fn upload_blob(
+    async fn get_blob_metadata(
         &self,
         _method: &Method,
         _host: &Host,
         _cookies: &CookieJar,
-        query_params: &openapi::models::UploadBlobQueryParams,
-        body: &Bytes,
-    ) -> Result<openapi::apis::default::UploadBlobResponse, ()> {
-        let tags = vec![Some(String::from("uploaded"))];
-        match self
-            .service
-            .upload_bytes(&query_params.filename, body, tags)
-            .await
-        {
+        path_params: &openapi::models::GetBlobMetadataPathParams,
+    ) -> Result<openapi::apis::default::GetBlobMetadataResponse, ()> {
+        // path_params.id is already uuid::Uuid — no parse needed
+        match self.service.get_container_meta(&path_params.id).await {
             Ok(meta) => Ok(
-                openapi::apis::default::UploadBlobResponse::Status201_Created(
-                    openapi::models::UploadResponse { id: meta.id },
+                openapi::apis::default::GetBlobMetadataResponse::Status200_OK(
+                    openapi::models::ContainerMetaResponse {
+                        id: meta.id,
+                        title: meta.title,
+                        description: Some(meta.description),
+                        tags: Some(meta.tags.into_iter().flatten().collect()),
+                        file_size_in_kb: meta.file_size_in_kb,
+                        duration: meta.duration,
+                        date_time_created: Some(meta.date_time_created),
+                        date_time_updated: Some(meta.date_time_updated),
+                    },
                 ),
             ),
-            Err(_) => Ok(openapi::apis::default::UploadBlobResponse::Status400_BadRequest),
+            Err(_) => Ok(openapi::apis::default::GetBlobMetadataResponse::Status404_NotFound),
         }
     }
 
@@ -74,17 +78,14 @@ impl openapi::apis::default::Default<()> for MultimediaApi {
         _cookies: &CookieJar,
         path_params: &openapi::models::DownloadBlobPathParams,
     ) -> Result<openapi::apis::default::DownloadBlobResponse, ()> {
-        let id = match uuid::Uuid::parse_str(&path_params.container_meta_id) {
-            Ok(id) => id,
-            Err(_) => return Ok(openapi::apis::default::DownloadBlobResponse::Status404_NotFound),
-        };
-        let meta = match self.service.get_container_meta(&id).await {
+        // path_params.id is uuid::Uuid directly
+        let meta = match self.service.get_container_meta(&path_params.id).await {
             Ok(m) => m,
             Err(_) => return Ok(openapi::apis::default::DownloadBlobResponse::Status404_NotFound),
         };
         match self
             .service
-            .download(&path_params.container_meta_id, &meta.title)
+            .download(&path_params.id.to_string(), &meta.title)
             .await
         {
             Ok(bytes) => Ok(openapi::apis::default::DownloadBlobResponse::Status200_OK(
@@ -101,21 +102,45 @@ impl openapi::apis::default::Default<()> for MultimediaApi {
         _cookies: &CookieJar,
         path_params: &openapi::models::DeleteBlobPathParams,
     ) -> Result<openapi::apis::default::DeleteBlobResponse, ()> {
-        let id = match uuid::Uuid::parse_str(&path_params.container_meta_id) {
-            Ok(id) => id,
-            Err(_) => return Ok(openapi::apis::default::DeleteBlobResponse::Status404_NotFound),
-        };
-        let meta = match self.service.get_container_meta(&id).await {
+        let meta = match self.service.get_container_meta(&path_params.id).await {
             Ok(m) => m,
             Err(_) => return Ok(openapi::apis::default::DeleteBlobResponse::Status404_NotFound),
         };
         match self
             .service
-            .delete(&path_params.container_meta_id, &meta.title)
+            .delete(&path_params.id.to_string(), &meta.title)
             .await
         {
             Ok(_) => Ok(openapi::apis::default::DeleteBlobResponse::Status204_NoContent),
             Err(_) => Ok(openapi::apis::default::DeleteBlobResponse::Status404_NotFound),
+        }
+    }
+
+    async fn upload_blob(
+        &self,
+        _method: &Method,
+        _host: &Host,
+        _cookies: &CookieJar,
+        header_params: &openapi::models::UploadBlobHeaderParams,
+        body: &Bytes,
+    ) -> Result<openapi::apis::default::UploadBlobResponse, ()> {
+        // content_disposition is String (required) — no Option unwrap needed
+        let file_name = header_params
+            .content_disposition
+            .split(';')
+            .find_map(|p| p.trim().strip_prefix("filename="))
+            .map(|f| f.trim_matches('"').to_string())
+            .unwrap_or_else(|| "upload".to_string());
+
+        let tags = vec![Some(String::from("uploaded"))];
+        match self.service.upload_bytes(&file_name, body, tags).await {
+            Ok(meta) => Ok(
+                openapi::apis::default::UploadBlobResponse::Status201_Created {
+                    body: openapi::models::UploadResponse { id: meta.id },
+                    location: Some(format!("/blobs/{}", meta.id)),
+                },
+            ),
+            Err(_) => Ok(openapi::apis::default::UploadBlobResponse::Status400_BadRequest),
         }
     }
 }

@@ -1,0 +1,9 @@
+target/
+docs/
+infra/
+scripts/
+.git/
+.devcontainer/
+*.html
+openapitools.json
+assets
