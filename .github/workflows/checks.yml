@@ -21,6 +21,9 @@ jobs:
         with:
           components: clippy, rustfmt
 
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
       - name: Install just
         uses: extractions/setup-just@v2
 
@@ -45,6 +48,15 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Cache cargo-tarpaulin binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-tarpaulin
+          key: ${{ runner.os }}-tarpaulin-${{ runner.arch }}
+
       - name: Install just
         uses: extractions/setup-just@v2
 
@@ -55,7 +67,7 @@ jobs:
             libpq-dev libssl-dev pkg-config protobuf-compiler
 
       - name: Install tarpaulin
-        run: cargo install cargo-tarpaulin
+        run: command -v cargo-tarpaulin || cargo install cargo-tarpaulin
 
       - name: Start services
         run: just compose-start
