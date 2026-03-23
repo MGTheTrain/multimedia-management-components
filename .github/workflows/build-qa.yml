@@ -1,0 +1,13 @@
+name: Build QA
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-reusable.yml
+    with:
+      upload_packages: true
+      revision_number: alpha-${{ github.run_number }}

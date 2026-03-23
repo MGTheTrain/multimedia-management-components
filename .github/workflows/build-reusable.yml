@@ -1,0 +1,57 @@
+name: Build Reusable
+
+on:
+  workflow_call:
+    inputs:
+      upload_packages:
+        type: boolean
+        default: false
+      revision_number:
+        type: string
+        default: ''
+
+jobs:
+  build-and-test-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libpq-dev libssl-dev pkg-config protobuf-compiler
+
+      - name: Start services
+        run: just compose-start
+
+      - name: Wait for services
+        run: |
+          until pg_isready -h localhost -p 5432 -U user; do sleep 1; done
+          until curl -s http://localhost:4566/_localstack/health \
+            | grep -q '"s3": "available"'; do sleep 2; done
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Test
+        run: just test-all
+
+      - name: Package
+        if: ${{ inputs.upload_packages }}
+        run: just package "${{ inputs.revision_number }}"
+
+      - name: Upload packages
+        if: ${{ inputs.upload_packages }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-packages
+          path: packages/
+          retention-days: 1

@@ -33,12 +33,14 @@ jobs:
       - name: Run pre-commit
         run: just pre-commit
 
-  test:
-    name: Test
+  sonar:
+    name: SonarCloud analysis
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -47,27 +49,24 @@ jobs:
         uses: extractions/setup-just@v2
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libpq-dev libssl-dev pkg-config protobuf-compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libpq-dev libssl-dev pkg-config protobuf-compiler
+
+      - name: Install tarpaulin
+        run: cargo install cargo-tarpaulin
 
       - name: Start services
         run: just compose-start
 
-      - name: Wait for services to be healthy
+      - name: Wait for services
         run: |
           until pg_isready -h localhost -p 5432 -U user; do sleep 1; done
-          until curl -s http://localhost:4566/_localstack/health | grep -q '"s3": "available"'; do sleep 2; done
+          until curl -s http://localhost:4566/_localstack/health \
+            | grep -q '"s3": "available"'; do sleep 2; done
 
-      - name: Test domain
-        run: just test domain
-
-      - name: Test parsers
-        run: just test parsers
-
-      - name: Test blob-storage-connector
-        run: just test infrastructure/blob-storage-connector
-
-      - name: Test persistence
-        run: just test infrastructure/persistence
-
-      - name: Test application
-        run: just test application
+      - name: Run sonar analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: bash scripts/sonar.sh
