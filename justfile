@@ -30,12 +30,17 @@ test-all:
     just test infrastructure/persistence
     just test application
 
+# Run coverage for all modules (HTML, Cobertura XML and LCOV)
 coverage:
     cargo tarpaulin --manifest-path crates/domain/Cargo.toml --include-files "crates/domain/*" --out Xml Html Lcov --output-dir coverage/domain
     cargo tarpaulin --manifest-path crates/parsers/Cargo.toml --include-files "crates/parsers/*" --out Xml Html Lcov --output-dir coverage/parsers
     cargo tarpaulin --manifest-path crates/infrastructure/blob-storage-connector/Cargo.toml --include-files "crates/infrastructure/blob-storage-connector/*" --out Xml Html Lcov --output-dir coverage/blob-storage-connector
     cargo tarpaulin --manifest-path crates/infrastructure/persistence/Cargo.toml --include-files "crates/infrastructure/persistence/*" --out Xml Html Lcov --output-dir coverage/persistence
     cargo tarpaulin --manifest-path crates/application/Cargo.toml --include-files "crates/application/*" --out Xml Html Lcov --output-dir coverage/application
+
+# Run SonarCloud analysis and check quality thresholds
+sonar:
+    bash scripts/sonar.sh
 
 # Format Rust files
 format:

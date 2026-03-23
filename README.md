@@ -81,7 +81,7 @@ Available recipes:
     compose-start         # Start infrastructure containers (postgres, localstack, azurite)
     compose-start-api     # Start all services including REST and gRPC APIs
     compose-stop          # Stop and remove docker containers
-    coverage
+    coverage              # Run coverage for all modules (HTML, Cobertura XML and LCOV)
     doc module            # Generate and open documentation for a given module
     format                # Format Rust files
     generate-server-stubs # Generate gRPC and REST server code from api/ specs
@@ -91,6 +91,7 @@ Available recipes:
     run-grpc-api          # Start gRPC API server locally
     run-rest-api          # Start REST API server locally
     s3-cli *args          # Run S3 CLI, e.g. `just s3-cli create-bucket`
+    sonar                 # Run SonarCloud analysis and check quality thresholds
     test module           # Run tests for a given module, e.g. `just test domain`
     test-all              # Run tests for all modules
     test-grpc-api         # Test gRPC endpoints
