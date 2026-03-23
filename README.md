@@ -47,6 +47,23 @@ just generate-server-stubs
 | LocalStack (S3) | 4566 |
 | Azurite (Azure) | 10000 |
 
+
+### Code Quality
+
+pre-commit (formatting and linting — no build required):
+```sh
+pip install pre-commit
+just pre-commit
+```
+
+SonarCloud (coverage and static analysis — requires a SonarCloud account):
+```sh
+export SONAR_TOKEN=<your-token>
+just sonar
+```
+
+Results are published to [sonarcloud.io](https://sonarcloud.io/project/overview?id=MGTheTrain_multimedia-management-components). Both checks run automatically in CI on every pull request and push to main.
+
 ### Quick Start
 
 #### Prerequisites
