@@ -2,13 +2,40 @@
 test module:
     cargo test --manifest-path crates/{{module}}/Cargo.toml
 
-# Run coverage for a given module, e.g. `just coverage infrastructure/persistence`
-coverage module:
-    cargo tarpaulin --manifest-path crates/{{module}}/Cargo.toml --out Html
-
 # Update dependencies for a given module, e.g. `just upgrade infrastructure/persistence`
 upgrade module:
     cargo upgrade --manifest-path crates/{{module}}/Cargo.toml --incompatible
+
+# Generate and open documentation for a given module
+doc module:
+    cargo doc --manifest-path crates/{{module}}/Cargo.toml --no-deps
+
+# Package release binaries into a distributable archive
+package revision="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    VERSION=$(grep '^version' Cargo.toml | head -1 | cut -d'"' -f2)
+    PKG_NAME="rust-app-${VERSION}${revision:+-${revision}}"
+    mkdir -p packages
+    zip -j "packages/${PKG_NAME}-linux-x64.zip" \
+      target/release/rest-api \
+      target/release/grpc-api
+    echo "Packaged: packages/${PKG_NAME}-linux-x64.zip"
+
+# Run tests for all modules
+test-all:
+    just test domain
+    just test parsers
+    just test infrastructure/blob-storage-connector
+    just test infrastructure/persistence
+    just test application
+
+coverage:
+    cargo tarpaulin --manifest-path crates/domain/Cargo.toml --include-files "crates/domain/*" --out Xml Html Lcov --output-dir coverage/domain
+    cargo tarpaulin --manifest-path crates/parsers/Cargo.toml --include-files "crates/parsers/*" --out Xml Html Lcov --output-dir coverage/parsers
+    cargo tarpaulin --manifest-path crates/infrastructure/blob-storage-connector/Cargo.toml --include-files "crates/infrastructure/blob-storage-connector/*" --out Xml Html Lcov --output-dir coverage/blob-storage-connector
+    cargo tarpaulin --manifest-path crates/infrastructure/persistence/Cargo.toml --include-files "crates/infrastructure/persistence/*" --out Xml Html Lcov --output-dir coverage/persistence
+    cargo tarpaulin --manifest-path crates/application/Cargo.toml --include-files "crates/application/*" --out Xml Html Lcov --output-dir coverage/application
 
 # Format Rust files
 format:
@@ -62,6 +89,7 @@ test-grpc-api:
 generate-server-stubs:
     bash scripts/generate.sh
 
-# Remove all Rust target build directories
+# Remove all Rust target build directories and packages
 clean:
     find . -type d -name target -exec rm -rf {} +
+    rm -rf packages/ .scannerwork/
