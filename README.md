@@ -60,19 +60,22 @@ just generate-server-stubs
 just --list
 Available recipes:
     azure-cli *args       # Run Azure CLI, e.g. `just azure-cli create-container`
-    clean                 # Remove all Rust target build directories
+    clean                 # Remove all Rust target build directories and packages
     compose-start         # Start infrastructure containers (postgres, localstack, azurite)
     compose-start-api     # Start all services including REST and gRPC APIs
     compose-stop          # Stop and remove docker containers
-    coverage module       # Run coverage for a given module, e.g. `just coverage infrastructure/persistence`
+    coverage
+    doc module            # Generate and open documentation for a given module
     format                # Format Rust files
     generate-server-stubs # Generate gRPC and REST server code from api/ specs
+    package revision=""   # Package release binaries into a distributable archive
     pre-commit            # Run pre-commit hooks on all files (includes fmt, clippy, shfmt, codespell)
     pre-commit-install    # Install pre-commit hooks
     run-grpc-api          # Start gRPC API server locally
     run-rest-api          # Start REST API server locally
     s3-cli *args          # Run S3 CLI, e.g. `just s3-cli create-bucket`
     test module           # Run tests for a given module, e.g. `just test domain`
+    test-all              # Run tests for all modules
     test-grpc-api         # Test gRPC endpoints
     test-rest-api         # Test REST API endpoints
     upgrade module        # Update dependencies for a given module, e.g. `just upgrade infrastructure/persistence`
