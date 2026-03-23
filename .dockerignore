@@ -7,3 +7,8 @@ scripts/
 *.html
 openapitools.json
 assets
+packages
+build_rs_cov.profraw
+secrets.cfg
+coverage
+.scannerwork
