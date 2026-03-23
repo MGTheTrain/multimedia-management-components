@@ -28,7 +28,7 @@ use rest_handlers::v1::{AppState, MultimediaApi};
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
     dotenvy::dotenv().ok();
 
@@ -62,7 +62,8 @@ async fn main() {
     // use the generated router directly — no manual route wiring needed
     let app = openapi::server::new(api).layer(DefaultBodyLimit::max(100 * 1024 * 1024));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
     log::info!("Listening on 0.0.0.0:8080");
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app).await?;
+    Ok(())
 }
