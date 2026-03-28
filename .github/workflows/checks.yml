@@ -57,6 +57,9 @@ jobs:
           path: ~/.cargo/bin/cargo-tarpaulin
           key: ${{ runner.os }}-tarpaulin-${{ runner.arch }}
 
+      - name: Install cargo-audit
+        run: command -v cargo-audit || cargo install cargo-audit --locked
+
       - name: Install just
         uses: extractions/setup-just@v2
 

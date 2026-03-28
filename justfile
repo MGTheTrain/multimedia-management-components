@@ -54,6 +54,10 @@ pre-commit:
 pre-commit-install:
     pre-commit install
 
+# Check for known security vulnerabilities in dependencies
+audit:
+    cargo audit
+
 # Start infrastructure containers (postgres, localstack, azurite)
 compose-start:
     docker compose -f infra/compose/docker-compose.yml up -d
