@@ -103,7 +103,7 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
 name = "application"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "blob-storage-connector",
@@ -686,7 +686,7 @@ dependencies = [
 
 [[package]]
 name = "azure-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "blob-storage-connector",
  "clap",
@@ -837,7 +837,7 @@ checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
 
 [[package]]
 name = "blob-storage-connector"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "aws-config",
@@ -1305,7 +1305,7 @@ dependencies = [
 
 [[package]]
 name = "domain"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "chrono",
@@ -1835,7 +1835,7 @@ dependencies = [
 
 [[package]]
 name = "grpc-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "application",
  "blob-storage-connector",
@@ -1850,7 +1850,7 @@ dependencies = [
 
 [[package]]
 name = "grpc-handlers"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "application",
  "domain",
@@ -2875,7 +2875,7 @@ dependencies = [
 
 [[package]]
 name = "parsers"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "domain",
@@ -2900,7 +2900,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
 name = "persistence"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-trait",
  "bb8",
@@ -3473,7 +3473,7 @@ dependencies = [
 
 [[package]]
 name = "rest-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "application",
  "axum",
@@ -3489,7 +3489,7 @@ dependencies = [
 
 [[package]]
 name = "rest-handlers"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "application",
  "async-trait",
@@ -3633,7 +3633,7 @@ checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
 
 [[package]]
 name = "s3-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "blob-storage-connector",
  "clap",
